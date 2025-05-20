@@ -35,12 +35,12 @@ const performanceData = {
     {
       label: 'Missions',
       data: [28, 32, 36, 30, 40, 48],
-      color: '#3b82f6'
+      color: '#ff6a3d'
     },
     {
-      label: 'Intérimaires',
+      label: 'Candidats',
       data: [45, 52, 49, 60, 72, 80],
-      color: '#8b5cf6'
+      color: '#9b6bff'
     }
   ]
 };
@@ -48,23 +48,23 @@ const performanceData = {
 // Données pour les statistiques
 const statsData = [
   {
-    title: 'Missions complétées',
+    title: 'Offres publiées',
     value: 87,
     change: 12.3,
     increasingIsGood: true
   },
   {
-    title: 'Taux de remplissage',
+    title: 'Taux de matching',
     value: 92.5,
     unit: '%',
     change: 2.6,
     increasingIsGood: true
   },
   {
-    title: 'Heures facturées',
-    value: 4850,
-    change: -5.4,
-    increasingIsGood: false
+    title: 'Candidats recrutés',
+    value: 48,
+    change: 15.4,
+    increasingIsGood: true
   },
   {
     title: 'Satisfaction client',
@@ -77,11 +77,11 @@ const statsData = [
 
 // Données pour la répartition par métier
 const distributionByJob = [
-  { name: 'Industrie', value: 35, color: 'bg-indigo-500' },
-  { name: 'BTP', value: 28, color: 'bg-blue-500' },
-  { name: 'Logistique', value: 18, color: 'bg-cyan-500' },
-  { name: 'Tertiaire', value: 12, color: 'bg-emerald-500' },
-  { name: 'Autres', value: 7, color: 'bg-orange-500' }
+  { name: 'Tech', value: 35, color: 'bg-violet' },
+  { name: 'Marketing', value: 28, color: 'bg-orange' },
+  { name: 'Finance', value: 18, color: 'bg-bleu' },
+  { name: 'Commercial', value: 12, color: 'bg-emerald-500' },
+  { name: 'Autres', value: 7, color: 'bg-gray-400' }
 ];
 
 // Liste fictive des rapports
@@ -89,7 +89,7 @@ const mockReports: Report[] = [
   {
     id: '1',
     title: 'Rapport de performance mensuel',
-    description: 'Analyse des performances des missions et des intérimaires',
+    description: 'Analyse des performances des offres d\'emploi et des candidats',
     type: 'performance',
     date: new Date('2024-03-01'),
     timeFrame: 'month'
@@ -112,8 +112,8 @@ const mockReports: Report[] = [
   },
   {
     id: '4',
-    title: 'Performance des intérimaires',
-    description: 'Analyse des performances par intérimaire et par secteur',
+    title: 'Performance des candidats',
+    description: 'Analyse des performances par candidat et par secteur',
     type: 'performance',
     date: new Date('2024-02-15'),
     timeFrame: 'month'
@@ -186,21 +186,21 @@ export const ReportsList: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white">Rapports et analyses</h1>
-        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-900">
+        <h1 className="text-2xl font-bold text-bleu">Rapports et analyses</h1>
+        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-ivoire bg-orange hover:bg-orange/80 focus:outline-none focus:ring-2 focus:ring-orange focus:ring-offset-2">
           <BarChart4 className="w-4 h-4 mr-2" />
           Générer un rapport
         </button>
       </div>
 
       {/* Onglets de navigation */}
-      <div className="border-b border-gray-700">
+      <div className="border-b border-gray-200">
         <div className="flex space-x-4">
           <button
             className={`pb-3 px-1 text-sm font-medium ${
               activeTab === 'overview'
-                ? 'text-primary-400 border-b-2 border-primary-400'
-                : 'text-gray-400 hover:text-gray-300'
+                ? 'text-violet border-b-2 border-violet'
+                : 'text-bleu hover:text-orange'
             }`}
             onClick={() => setActiveTab('overview')}
           >
@@ -209,8 +209,8 @@ export const ReportsList: React.FC = () => {
           <button
             className={`pb-3 px-1 text-sm font-medium ${
               activeTab === 'list'
-                ? 'text-primary-400 border-b-2 border-primary-400'
-                : 'text-gray-400 hover:text-gray-300'
+                ? 'text-violet border-b-2 border-violet'
+                : 'text-bleu hover:text-orange'
             }`}
             onClick={() => setActiveTab('list')}
           >
@@ -224,16 +224,16 @@ export const ReportsList: React.FC = () => {
           {/* Statistiques */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {statsData.map((stat, index) => (
-              <div key={index} className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
-                <p className="text-sm text-gray-400">{stat.title}</p>
+              <div key={index} className="bg-ivoire rounded-xl p-4 border border-gray-200 shadow-sm">
+                <p className="text-sm text-gray-600">{stat.title}</p>
                 <div className="mt-2 flex justify-between items-baseline">
-                  <p className="text-2xl font-semibold text-white">
+                  <p className="text-2xl font-semibold text-bleu">
                     {stat.value}{stat.unit || ''}
                   </p>
                   <div className={`flex items-center text-xs px-2 py-1 rounded-full ${
                     stat.change > 0 
-                      ? stat.increasingIsGood ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
-                      : stat.increasingIsGood ? 'bg-red-500/10 text-red-400' : 'bg-green-500/10 text-green-400'
+                      ? stat.increasingIsGood ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
+                      : stat.increasingIsGood ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'
                   }`}>
                     {stat.change > 0 ? (
                       <>
@@ -254,17 +254,17 @@ export const ReportsList: React.FC = () => {
           
           {/* Graphique de performance */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+            <div className="lg:col-span-2 bg-ivoire rounded-xl p-6 border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-semibold text-white">Performance</h2>
+                <h2 className="text-lg font-semibold text-bleu">Performance</h2>
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center space-x-1">
-                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                    <span className="text-xs text-gray-400">Missions</span>
+                    <div className="w-3 h-3 rounded-full bg-orange"></div>
+                    <span className="text-xs text-gray-600">Offres</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                    <span className="text-xs text-gray-400">Intérimaires</span>
+                    <div className="w-3 h-3 rounded-full bg-violet"></div>
+                    <span className="text-xs text-gray-600">Candidats</span>
                   </div>
                 </div>
               </div>
@@ -276,15 +276,15 @@ export const ReportsList: React.FC = () => {
                     <div key={index} className="flex flex-col items-center space-y-2 w-10">
                       <div className="flex flex-col items-center space-y-1 w-full">
                         <div 
-                          className="w-5 bg-purple-500 rounded-t"
+                          className="w-5 bg-violet rounded-t"
                           style={{ height: `${performanceData.datasets[1].data[index]}px` }}
                         />
                         <div 
-                          className="w-5 bg-blue-500 rounded-t"
+                          className="w-5 bg-orange rounded-t"
                           style={{ height: `${performanceData.datasets[0].data[index]}px` }}
                         />
                       </div>
-                      <span className="text-xs text-gray-400">{label}</span>
+                      <span className="text-xs text-gray-600">{label}</span>
                     </div>
                   ))}
                 </div>
@@ -292,17 +292,17 @@ export const ReportsList: React.FC = () => {
             </div>
             
             {/* Distribution par métier */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-              <h2 className="text-lg font-semibold text-white mb-6">Répartition par secteur</h2>
+            <div className="bg-ivoire rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-lg font-semibold text-bleu mb-6">Répartition par secteur</h2>
               
               <div className="space-y-4">
                 {distributionByJob.map((item, index) => (
                   <div key={index}>
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm text-gray-300">{item.name}</span>
-                      <span className="text-sm text-gray-400">{item.value}%</span>
+                      <span className="text-sm text-gray-700">{item.name}</span>
+                      <span className="text-sm text-gray-600">{item.value}%</span>
                     </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className={`h-2 rounded-full ${item.color}`}
                         style={{ width: `${item.value}%` }}
@@ -315,24 +315,24 @@ export const ReportsList: React.FC = () => {
           </div>
           
           {/* Rapports récents */}
-          <div className="bg-gray-800/50 rounded-xl border border-gray-700">
-            <div className="p-4 border-b border-gray-700">
-              <h2 className="text-lg font-semibold text-white">Rapports récents</h2>
+          <div className="bg-ivoire rounded-xl border border-gray-200 shadow-sm">
+            <div className="p-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-bleu">Rapports récents</h2>
             </div>
             <div>
               {mockReports.slice(0, 3).map((report) => (
-                <div key={report.id} className="p-4 border-b border-gray-700 last:border-b-0 hover:bg-gray-700/30 transition-colors">
+                <div key={report.id} className="p-4 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors">
                   <div className="flex justify-between">
                     <div>
-                      <h3 className="text-sm font-medium text-white">{report.title}</h3>
-                      <p className="text-xs text-gray-400 mt-1">{report.description}</p>
+                      <h3 className="text-sm font-medium text-bleu">{report.title}</h3>
+                      <p className="text-xs text-gray-600 mt-1">{report.description}</p>
                     </div>
-                    <button className="p-1.5 text-gray-400 hover:text-primary-400 transition-colors">
+                    <button className="p-1.5 text-gray-500 hover:text-orange transition-colors">
                       <Download className="w-4 h-4" />
                     </button>
                   </div>
                   <div className="flex items-center mt-2">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-700 text-gray-300 mr-2">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-violet/10 text-violet mr-2">
                       {getReportTypeLabel(report.type)}
                     </span>
                     <span className="text-xs text-gray-500">Généré le {formatDate(report.date)}</span>
@@ -348,11 +348,11 @@ export const ReportsList: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className="h-5 w-5 text-orange" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-700 bg-gray-800/50 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm text-gray-200 placeholder-gray-400"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-violet focus:border-violet text-bleu text-sm placeholder-gray-500"
                 placeholder="Rechercher un rapport..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -362,7 +362,7 @@ export const ReportsList: React.FC = () => {
             <div className="flex gap-3">
               <div className="relative">
                 <button
-                  className="flex items-center px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 text-gray-200"
+                  className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 text-bleu"
                   onClick={() => document.getElementById('type-dropdown')?.classList.toggle('hidden')}
                 >
                   <Filter className="h-4 w-4 mr-2" />
@@ -370,10 +370,10 @@ export const ReportsList: React.FC = () => {
                   <ChevronDown className="h-4 w-4 ml-2" />
                 </button>
                 
-                <div id="type-dropdown" className="absolute mt-2 w-48 bg-gray-700 border border-gray-600 rounded-lg shadow-lg overflow-hidden z-10 hidden">
+                <div id="type-dropdown" className="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden z-10 hidden">
                   <div className="p-2">
                     <button
-                      className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-600 text-gray-200"
+                      className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-100 text-bleu"
                       onClick={() => {
                         setTypeFilter('all');
                         document.getElementById('type-dropdown')?.classList.add('hidden');
@@ -386,7 +386,7 @@ export const ReportsList: React.FC = () => {
                     {(['financial', 'performance', 'activity'] as ReportType[]).map(type => (
                       <button
                         key={type}
-                        className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-600 text-gray-200"
+                        className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-100 text-bleu"
                         onClick={() => {
                           setTypeFilter(type);
                           document.getElementById('type-dropdown')?.classList.add('hidden');
@@ -402,7 +402,7 @@ export const ReportsList: React.FC = () => {
               
               <div className="relative">
                 <button
-                  className="flex items-center px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 text-gray-200"
+                  className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 text-bleu"
                   onClick={() => document.getElementById('timeframe-dropdown')?.classList.toggle('hidden')}
                 >
                   <Calendar className="h-4 w-4 mr-2" />
@@ -410,10 +410,10 @@ export const ReportsList: React.FC = () => {
                   <ChevronDown className="h-4 w-4 ml-2" />
                 </button>
                 
-                <div id="timeframe-dropdown" className="absolute mt-2 w-48 bg-gray-700 border border-gray-600 rounded-lg shadow-lg overflow-hidden z-10 hidden">
+                <div id="timeframe-dropdown" className="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden z-10 hidden">
                   <div className="p-2">
                     <button
-                      className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-600 text-gray-200"
+                      className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-100 text-bleu"
                       onClick={() => {
                         setTimeFrameFilter('all');
                         document.getElementById('timeframe-dropdown')?.classList.add('hidden');
@@ -426,7 +426,7 @@ export const ReportsList: React.FC = () => {
                     {(['week', 'month', 'quarter', 'year'] as TimeFrame[]).map(timeFrame => (
                       <button
                         key={timeFrame}
-                        className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-600 text-gray-200"
+                        className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-100 text-bleu"
                         onClick={() => {
                           setTimeFrameFilter(timeFrame);
                           document.getElementById('timeframe-dropdown')?.classList.add('hidden');
@@ -443,24 +443,24 @@ export const ReportsList: React.FC = () => {
           </div>
           
           {/* Liste des rapports */}
-          <div className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
+          <div className="bg-ivoire rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             {filteredReports.length > 0 ? (
-              <div className="divide-y divide-gray-700">
+              <div className="divide-y divide-gray-200">
                 {filteredReports.map((report) => (
-                  <div key={report.id} className="p-4 hover:bg-gray-700/30 transition-colors">
+                  <div key={report.id} className="p-4 hover:bg-gray-50 transition-colors">
                     <div className="sm:flex sm:justify-between sm:items-center">
                       <div className="flex items-start space-x-4">
-                        <div className="p-2 bg-gray-700 rounded-lg">
-                          <FileBarChart className="h-6 w-6 text-primary-400" />
+                        <div className="p-2 bg-violet/10 rounded-lg">
+                          <FileBarChart className="h-6 w-6 text-violet" />
                         </div>
                         <div>
-                          <h3 className="text-md font-medium text-white">{report.title}</h3>
-                          <p className="text-sm text-gray-400 mt-1">{report.description}</p>
+                          <h3 className="text-md font-medium text-bleu">{report.title}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{report.description}</p>
                           <div className="flex flex-wrap gap-2 mt-2">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-700 text-gray-300">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-violet/10 text-violet">
                               {getReportTypeLabel(report.type)}
                             </span>
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-700 text-gray-300">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange/10 text-orange">
                               {getTimeFrameLabel(report.timeFrame)}
                             </span>
                             <span className="text-xs text-gray-500">
@@ -470,7 +470,7 @@ export const ReportsList: React.FC = () => {
                         </div>
                       </div>
                       <div className="mt-4 sm:mt-0 sm:ml-6 flex">
-                        <button className="ml-auto flex items-center px-3 py-1.5 border border-gray-600 rounded-md text-sm text-gray-300 hover:bg-gray-700 hover:border-gray-500 transition-colors">
+                        <button className="ml-auto flex items-center px-3 py-1.5 border border-gray-300 rounded-md text-sm text-bleu hover:bg-gray-100 transition-colors">
                           <Download className="h-4 w-4 mr-1.5" />
                           Télécharger
                         </button>
@@ -481,8 +481,8 @@ export const ReportsList: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-12 px-4">
-                <FileBarChart className="mx-auto h-12 w-12 text-gray-500" />
-                <h3 className="mt-2 text-sm font-medium text-gray-300">Aucun rapport trouvé</h3>
+                <FileBarChart className="mx-auto h-12 w-12 text-gray-400" />
+                <h3 className="mt-2 text-sm font-medium text-bleu">Aucun rapport trouvé</h3>
                 <p className="mt-1 text-sm text-gray-500">Aucun rapport ne correspond à vos critères de recherche.</p>
               </div>
             )}

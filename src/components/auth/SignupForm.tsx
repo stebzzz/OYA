@@ -97,7 +97,7 @@ export const SignupForm = () => {
                         <UserPlus className="w-8 h-8 text-primary-600" />
                     </div>
                     <h1 className="text-2xl font-bold font-heading text-gray-800">Créer un compte Oya</h1>
-                    <p className="text-gray-500 mt-2 text-center">Rejoignez la plateforme d'intérim innovante</p>
+                    <p className="text-gray-500 mt-2 text-center">Rejoignez la plateforme RH innovante</p>
                 </div>
 
                 {error && (

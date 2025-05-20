@@ -4,7 +4,7 @@ import {
   Calendar, CheckCircle, BarChart4, Activity, ArrowRight, 
   Menu, MoreHorizontal, ChevronDown, User, FilePlus, 
   FileText, Wallet, PlusCircle, Settings, Search, MessageSquare,
-  Loader2, X
+  Loader2, X, Brain, Bot, Zap, LineChart
 } from 'lucide-react';
 import { 
   getDashboardStats, 
@@ -147,24 +147,24 @@ export const Dashboard = () => {
   const renderStats = () => {
     const colorMappings = {
       primary: {
-        bg: 'from-violet-500 to-indigo-600',
-        glow: 'from-violet-600/30 via-indigo-600/20 to-transparent',
-        light: 'text-violet-300'
+        bg: 'from-primary-500 to-secondary-500',
+        glow: 'from-primary-500/30 to-secondary-500/20',
+        light: 'text-primary-500'
       },
       secondary: {
-        bg: 'from-sky-500 to-cyan-600',
-        glow: 'from-sky-600/30 via-cyan-600/20 to-transparent',
-        light: 'text-sky-300'
+        bg: 'from-primary-500 to-primary-600',
+        glow: 'from-primary-600/30 to-primary-500/20',
+        light: 'text-primary-400'
       },
       success: {
-        bg: 'from-emerald-500 to-teal-600',
-        glow: 'from-emerald-600/30 via-teal-600/20 to-transparent',
-        light: 'text-emerald-300'
+        bg: 'from-secondary-500 to-secondary-600',
+        glow: 'from-secondary-600/30 to-secondary-500/20',
+        light: 'text-secondary-400'
       },
       warning: {
-        bg: 'from-amber-500 to-yellow-600',
-        glow: 'from-amber-600/30 via-yellow-600/20 to-transparent',
-        light: 'text-amber-300'
+        bg: 'from-secondary-500 to-primary-500',
+        glow: 'from-secondary-500/30 to-primary-500/20',
+        light: 'text-secondary-300'
       }
     };
     
@@ -176,7 +176,7 @@ export const Dashboard = () => {
               key={index} 
               className="relative overflow-hidden rounded-xl backdrop-blur-md group transition-all duration-300 h-32"
             >
-              <div className="absolute inset-0 bg-gray-950/40"></div>
+              <div className="absolute inset-0 bg-dark/50"></div>
               <div className="absolute inset-0 rounded-xl border border-white/10"></div>
               <div className="relative p-5 flex items-center justify-center">
                 <Loader2 className="h-8 w-8 text-primary-500 animate-spin" />
@@ -189,10 +189,10 @@ export const Dashboard = () => {
     
     if (error.stats) {
       return (
-        <div className="bg-red-500/10 border border-red-400/20 p-4 rounded-xl text-red-300">
+        <div className="bg-primary-500/10 border border-primary-400/20 p-4 rounded-xl text-primary-300">
           <p>{error.stats}</p>
           <button 
-            className="mt-2 px-3 py-1 bg-red-600/30 hover:bg-red-600/50 rounded text-sm transition-colors"
+            className="mt-2 px-3 py-1 bg-primary-600/30 hover:bg-primary-600/50 rounded text-sm transition-colors"
             onClick={() => {
               setLoading(prev => ({ ...prev, stats: true }));
               getDashboardStats().then(data => {
@@ -217,7 +217,7 @@ export const Dashboard = () => {
 
     const statItems = [
       {
-        title: 'Intérimaires actifs',
+        title: 'Candidats identifiés',
         value: stats.activeWorkers.toString(),
         trend: stats.trends.workers,
         trendDirection: stats.trends.workers.startsWith('+') ? 'up' : 'down',
@@ -225,27 +225,27 @@ export const Dashboard = () => {
         color: 'primary' as ColorKey
       },
       {
-        title: 'Missions en cours',
+        title: 'Entretiens programmés',
         value: stats.activeMissions.toString(),
         trend: stats.trends.missions,
         trendDirection: stats.trends.missions.startsWith('+') ? 'up' : 'down',
-        icon: Briefcase,
+        icon: Calendar,
         color: 'secondary' as ColorKey
       },
       {
-        title: 'Heures travaillées',
-        value: stats.hoursWorked.toString(),
+        title: 'Score de matching',
+        value: stats.hoursWorked.toString() + '%',
         trend: stats.trends.hours,
         trendDirection: stats.trends.hours.startsWith('+') ? 'up' : 'down',
-        icon: Clock,
+        icon: Brain,
         color: 'success' as ColorKey
       },
       {
-        title: 'Documents à valider',
+        title: 'Offres envoyées',
         value: stats.pendingDocuments.toString(),
         trend: stats.trends.documents,
         trendDirection: stats.trends.documents.startsWith('+') ? 'up' : 'down',
-        icon: AlertTriangle,
+        icon: FileText,
         color: 'warning' as ColorKey
       }
     ];
@@ -261,11 +261,11 @@ export const Dashboard = () => {
               className="relative overflow-hidden rounded-xl backdrop-blur-md group transition-all duration-300 hover:scale-[1.02]"
             >
               {/* Background gradient and glow */}
-              <div className="absolute inset-0 bg-gray-950/40"></div>
+              <div className="absolute inset-0 bg-white"></div>
               <div className={`absolute -bottom-8 -right-8 h-40 w-40 rounded-full bg-gradient-radial ${colors.glow} opacity-20 group-hover:opacity-30 transition-opacity duration-500 blur-xl`}></div>
               
               {/* Glass border effect */}
-              <div className="absolute inset-0 rounded-xl border border-white/10"></div>
+              <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
               <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${colors.bg}`}></div>
               
               <div className="relative p-5">
@@ -274,23 +274,23 @@ export const Dashboard = () => {
                     <div className={`p-3 rounded-xl bg-gradient-to-br ${colors.bg} shadow-lg`}>
                       <stat.icon className="h-5 w-5 text-white" />
                     </div>
-                    <h3 className="ml-3 text-sm font-medium text-gray-300">
+                    <h3 className="ml-3 text-sm font-medium text-dark">
                       {stat.title}
                     </h3>
                   </div>
-                  <button className="p-0.5 rounded-md hover:bg-white/5">
-                    <MoreHorizontal className="h-4 w-4 text-gray-400" />
+                  <button className="p-0.5 rounded-md hover:bg-dark/5">
+                    <MoreHorizontal className="h-4 w-4 text-dark/60" />
                   </button>
                 </div>
                 
                 <div className="flex items-baseline justify-between">
-                  <span className="text-2xl font-bold text-white">
+                  <span className="text-2xl font-bold text-dark">
                     {stat.value}
                   </span>
                   <div className={`flex items-center text-xs px-2 py-1 rounded-full ${
                     stat.trendDirection === 'up' 
-                      ? 'text-emerald-300 bg-emerald-500/10' 
-                      : 'text-rose-300 bg-rose-500/10'
+                      ? 'text-emerald-700 bg-emerald-500/10' 
+                      : 'text-primary-700 bg-primary-500/10'
                   }`}>
                     {stat.trendDirection === 'up' 
                       ? <TrendingUp className="h-3 w-3 mr-1" /> 
@@ -312,8 +312,8 @@ export const Dashboard = () => {
     if (loading.chart) {
       return (
         <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all h-96">
-          <div className="absolute inset-0 bg-gray-950/40"></div>
-          <div className="absolute inset-0 rounded-xl border border-white/10"></div>
+          <div className="absolute inset-0 bg-white"></div>
+          <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
           <div className="relative p-6 h-full flex items-center justify-center">
             <Loader2 className="h-10 w-10 text-primary-500 animate-spin" />
           </div>
@@ -324,14 +324,14 @@ export const Dashboard = () => {
     if (error.chart) {
       return (
         <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-          <div className="absolute inset-0 bg-gray-950/40"></div>
-          <div className="absolute inset-0 rounded-xl border border-white/10"></div>
+          <div className="absolute inset-0 bg-white"></div>
+          <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
           <div className="relative p-6">
-            <div className="text-red-300 flex flex-col items-center justify-center p-10">
-              <AlertTriangle className="h-10 w-10 text-red-400 mb-4" />
+            <div className="text-primary-500 flex flex-col items-center justify-center p-10">
+              <AlertTriangle className="h-10 w-10 text-primary-500 mb-4" />
               <p>{error.chart}</p>
               <button 
-                className="mt-4 px-4 py-2 bg-primary-600/30 hover:bg-primary-600/50 rounded-lg text-white transition-colors"
+                className="mt-4 px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg text-white transition-colors"
                 onClick={() => {
                   setLoading(prev => ({ ...prev, chart: true }));
                   getPerformanceChartData().then(data => {
@@ -364,28 +364,28 @@ export const Dashboard = () => {
     return (
       <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
         {/* Background and glow */}
-        <div className="absolute inset-0 bg-gray-950/40"></div>
-        <div className="absolute -top-20 left-20 w-[500px] h-64 bg-sky-600/5 rotate-45 filter blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-20 right-20 w-[300px] h-64 bg-violet-600/5 -rotate-45 filter blur-3xl opacity-20"></div>
+        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute -top-20 left-20 w-[500px] h-64 bg-secondary-500/5 rotate-45 filter blur-3xl opacity-20"></div>
+        <div className="absolute -bottom-20 right-20 w-[300px] h-64 bg-primary-500/5 -rotate-45 filter blur-3xl opacity-20"></div>
         
         {/* Glass border effect */}
-        <div className="absolute inset-0 rounded-xl border border-white/10"></div>
+        <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
         
         <div className="relative p-6">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h2 className="text-lg font-bold text-white">Performance annuelle</h2>
-              <div className="h-0.5 w-12 bg-sky-500/40 mt-1 rounded-full"></div>
+              <h2 className="text-lg font-bold text-dark">Matching IA</h2>
+              <div className="h-0.5 w-12 bg-primary-500/40 mt-1 rounded-full"></div>
             </div>
             
             <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/5">
-                <span className="text-xs text-gray-300">2024</span>
-                <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
+              <div className="flex items-center space-x-2 px-3 py-1.5 bg-dark/5 rounded-lg border border-dark/5">
+                <span className="text-xs text-dark/70">2024</span>
+                <ChevronDown className="h-3.5 w-3.5 text-dark/40" />
               </div>
               
-              <button className="p-1.5 rounded-lg hover:bg-white/5 transition">
-                <MoreHorizontal className="h-4 w-4 text-gray-400" />
+              <button className="p-1.5 rounded-lg hover:bg-dark/5 transition">
+                <MoreHorizontal className="h-4 w-4 text-dark/40" />
               </button>
             </div>
           </div>
@@ -394,42 +394,47 @@ export const Dashboard = () => {
             {chartData.datasets.map((dataset, idx) => (
               <div key={idx} className="flex items-center space-x-1">
                 <div className={`h-3 w-3 rounded-full ${
-                  idx === 0 ? 'bg-sky-500/80' : 'bg-violet-500/80'
+                  idx === 0 ? 'bg-primary-500/80' : 'bg-secondary-500/80'
                 }`}></div>
-                <span className="text-xs text-gray-400">{dataset.label}</span>
+                <span className="text-xs text-dark/60">{dataset.label}</span>
               </div>
             ))}
           </div>
           
-          <div className="h-56 flex items-end justify-between pt-5 pb-1">
-            {chartData.labels.map((label, i) => {
-              // Calculer les hauteurs normalisées pour chaque ensemble de données
-              const heights = chartData.datasets.map(ds => 
-                Math.round((ds.data[i] / maxValue) * 100)
-              );
+          <div className="h-[260px] flex items-end space-x-2">
+            {chartData.labels.map((label, idx) => {
+              // Calculer les hauteurs normalisées pour cet index
+              const heights = datasets.map(dataset => {
+                const value = dataset.data[idx];
+                return Math.round((value / maxValue) * 100);
+              });
               
               return (
-                <div key={i} className="flex-1 flex flex-col items-center">
-                  {/* Pour chaque dataset, afficher une barre */}
-                  {chartData.datasets.map((dataset, datasetIndex) => (
-                    <div 
-                      key={`${i}-${datasetIndex}`}
-                      className={`w-full max-w-[24px] ${
-                        datasetIndex === 0 
-                          ? 'bg-gradient-to-t from-sky-600/80 to-sky-400/80 z-10'
-                          : 'bg-gradient-to-t from-violet-600/80 to-violet-400/80 z-20 -mt-1'
-                      } rounded-t-sm relative group`}
-                      style={{ 
-                        height: `${heights[datasetIndex]}%`,
-                        marginLeft: datasetIndex === 1 ? '2px' : '0'
-                      }}
-                    >
-                      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-white text-xs px-2 py-1 rounded pointer-events-none whitespace-nowrap">
-                        {dataset.data[i]}
+                <div key={idx} className="flex-1 space-y-1">
+                  <div className="relative h-64 flex">
+                    {heights.map((height, datasetIdx) => (
+                      <div
+                        key={datasetIdx}
+                        className={`absolute bottom-0 w-full rounded-t-sm transform transition-all duration-500 
+                          ${datasetIdx === 0 ? 
+                            'bg-gradient-to-t from-primary-500/50 to-primary-500/80 z-10' : 
+                            'bg-gradient-to-t from-secondary-500/50 to-secondary-500/80 z-0 left-0'
+                          } 
+                          ${datasetIdx === 0 ? 'hover:translate-y-[-5px]' : 'hover:translate-y-[-3px]'}
+                        `}
+                        style={{ 
+                          height: `${height}%`,
+                          width: datasetIdx === 0 ? '65%' : '100%',
+                          left: datasetIdx === 0 ? '17.5%' : '0'
+                        }}
+                      >
+                        <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 transform -translate-x-1/2 bg-dark text-white text-xs py-1 px-2 rounded pointer-events-none">
+                          {datasets[datasetIdx].data[idx]}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  <span className="text-xs text-gray-500 mt-2">{label}</span>
+                    ))}
+                  </div>
+                  <div className="text-xs text-center text-dark/60">{label}</div>
                 </div>
               );
             })}
@@ -439,535 +444,30 @@ export const Dashboard = () => {
     );
   };
 
-  // Rendu de la section des activités récentes
-  const renderRecentActivities = () => {
-    if (loading.activities) {
-      return (
-        <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-          <div className="absolute inset-0 bg-gray-950/40"></div>
-          <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-          <div className="relative p-6 h-80 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 text-primary-500 animate-spin" />
-          </div>
-        </div>
-      );
-    }
-    
-    if (error.activities) {
-      return (
-        <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-          <div className="absolute inset-0 bg-gray-950/40"></div>
-          <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-          <div className="relative p-6">
-            <div className="text-red-300 flex flex-col items-center justify-center p-10">
-              <AlertTriangle className="h-10 w-10 text-red-400 mb-4" />
-              <p>{error.activities}</p>
-              <button 
-                className="mt-4 px-4 py-2 bg-primary-600/30 hover:bg-primary-600/50 rounded-lg text-white transition-colors"
-                onClick={() => {
-                  setLoading(prev => ({ ...prev, activities: true }));
-                  getRecentActivities(4).then(data => {
-                    setRecentActivities(data);
-                    setError(prev => ({ ...prev, activities: null }));
-                  }).catch(err => {
-                    setError(prev => ({ ...prev, activities: "Impossible de charger les activités récentes" }));
-                  }).finally(() => {
-                    setLoading(prev => ({ ...prev, activities: false }));
-                  });
-                }}
-              >
-                Réessayer
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Mapper les icônes selon le type d'activité
-    const activityIcons = {
-      mission: Briefcase,
-      worker: Users,
-      document: FileText,
-      payment: Wallet
-    };
-
-    // Formater l'heure relative
-    const formatRelativeTime = (date: Date) => {
-      const now = new Date();
-      const diffInMinutes = Math.round((now.getTime() - date.getTime()) / (1000 * 60));
-      
-      if (diffInMinutes < 1) return "À l'instant";
-      if (diffInMinutes < 60) return `Il y a ${diffInMinutes} min`;
-      
-      const diffInHours = Math.floor(diffInMinutes / 60);
-      if (diffInHours < 24) return `Il y a ${diffInHours}h`;
-      
-      const diffInDays = Math.floor(diffInHours / 24);
-      if (diffInDays === 1) return "Hier";
-      
-      return `Il y a ${diffInDays} jours`;
-    };
-
-    return (
-      <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-        {/* Background and glow */}
-        <div className="absolute inset-0 bg-gray-950/40"></div>
-        <div className="absolute -top-20 left-20 w-[300px] h-64 bg-primary-600/5 rotate-45 filter blur-3xl opacity-20"></div>
-        
-        {/* Glass border effect */}
-        <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-        
-        <div className="relative p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-violet-600/20 rounded-xl blur-md"></div>
-                <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-xl">
-                  <Activity className="h-4 w-4" />
-                </div>
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white">
-                  Activités récentes
-                </h2>
-                <div className="h-0.5 w-12 bg-violet-500/40 mt-1 rounded-full"></div>
-              </div>
-            </div>
-            <button className="flex items-center space-x-1.5 text-sm text-gray-400 hover:text-violet-400 transition-colors duration-300 group">
-              <span>Voir tout</span>
-              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform duration-300" />
-            </button>
-          </div>
-          
-          <div className="space-y-4">
-            {recentActivities.length > 0 ? (
-              recentActivities.map((activity) => {
-                const IconComponent = activityIcons[activity.type] || AlertTriangle;
-                const statusColors = {
-                  success: {
-                    bg: 'from-emerald-500 to-emerald-600',
-                    border: 'rgba(52, 211, 153, 0.5)',
-                    glow: 'rgba(52, 211, 153, 0.3)'
-                  },
-                  warning: {
-                    bg: 'from-amber-500 to-amber-600',
-                    border: 'rgba(251, 191, 36, 0.5)',
-                    glow: 'rgba(251, 191, 36, 0.3)'
-                  },
-                  error: {
-                    bg: 'from-rose-500 to-rose-600',
-                    border: 'rgba(244, 63, 94, 0.5)',
-                    glow: 'rgba(244, 63, 94, 0.3)'
-                  }
-                };
-                
-                const colors = statusColors[activity.status as StatusKey];
-                
-                return (
-                  <div 
-                    key={activity.id} 
-                    className="group relative overflow-hidden p-4 rounded-lg hover:bg-white/[0.03] transition-all duration-300 backdrop-blur-sm"
-                    style={{ 
-                      borderLeft: `2px solid ${colors.border}`,
-                      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.03)'
-                    }}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className="relative">
-                        <div className="absolute inset-0 blur-sm opacity-50 rounded-lg" 
-                          style={{ background: colors.glow }}
-                        ></div>
-                        <div className={`relative flex-shrink-0 p-2 rounded-lg shadow-lg bg-gradient-to-br ${colors.bg} text-white`}>
-                          <IconComponent className="h-4 w-4" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-start">
-                          <p className="text-sm font-semibold text-white truncate">
-                            {activity.title}
-                          </p>
-                          <span className="text-xs text-gray-500 whitespace-nowrap ml-2">
-                            {formatRelativeTime(activity.timestamp instanceof Date 
-                              ? activity.timestamp 
-                              : (activity.timestamp as any).toDate())}
-                          </span>
-                        </div>
-                        <p className="mt-0.5 text-xs text-gray-400">
-                          {activity.description}
-                        </p>
-                        {activity.createdBy && (
-                          <div className="mt-2 flex items-center">
-                            <div className="h-5 w-5 rounded-full bg-gray-700 text-[9px] flex items-center justify-center text-white">
-                              {activity.createdBy.name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <span className="ml-1.5 text-xs text-gray-500">{activity.createdBy.name}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-center py-10">
-                <p className="text-gray-400">Aucune activité récente</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Rendu des missions à venir
-  const renderUpcomingMissions = () => {
-    if (loading.missions) {
-      return (
-        <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-          <div className="absolute inset-0 bg-gray-950/40"></div>
-          <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-          <div className="relative p-6 h-80 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 text-primary-500 animate-spin" />
-          </div>
-        </div>
-      );
-    }
-    
-    if (error.missions) {
-      return (
-        <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-          <div className="absolute inset-0 bg-gray-950/40"></div>
-          <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-          <div className="relative p-6">
-            <div className="text-red-300 flex flex-col items-center justify-center p-10">
-              <AlertTriangle className="h-10 w-10 text-red-400 mb-4" />
-              <p>{error.missions}</p>
-              <button 
-                className="mt-4 px-4 py-2 bg-primary-600/30 hover:bg-primary-600/50 rounded-lg text-white transition-colors"
-                onClick={() => {
-                  setLoading(prev => ({ ...prev, missions: true }));
-                  getUpcomingMissions(4).then(data => {
-                    setUpcomingMissions(data);
-                    setError(prev => ({ ...prev, missions: null }));
-                  }).catch(err => {
-                    setError(prev => ({ ...prev, missions: "Impossible de charger les missions à venir" }));
-                  }).finally(() => {
-                    setLoading(prev => ({ ...prev, missions: false }));
-                  });
-                }}
-              >
-                Réessayer
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Formater la date
-    const formatDate = (date: Date) => {
-      return new Intl.DateTimeFormat('fr-FR', { 
-        day: 'numeric', 
-        month: 'long',
-        year: 'numeric'
-      }).format(date);
-    };
-
-    return (
-      <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-        {/* Background and glow */}
-        <div className="absolute inset-0 bg-gray-950/40"></div>
-        <div className="absolute -bottom-20 right-20 w-[300px] h-64 bg-secondary-600/5 -rotate-45 filter blur-3xl opacity-20"></div>
-        
-        {/* Glass border effect */}
-        <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-        
-        <div className="relative p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-sky-600/20 rounded-xl blur-md"></div>
-                <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 text-white shadow-xl">
-                  <Calendar className="h-4 w-4" />
-                </div>
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white">
-                  Prochaines missions
-                </h2>
-                <div className="h-0.5 w-12 bg-sky-500/40 mt-1 rounded-full"></div>
-              </div>
-            </div>
-            <button className="flex items-center space-x-1.5 text-sm text-gray-400 hover:text-sky-400 transition-colors duration-300 group">
-              <span>Voir tout</span>
-              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform duration-300" />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {upcomingMissions.length > 0 ? (
-              upcomingMissions.map((mission) => {
-                const statusColors = {
-                  confirmed: {
-                    bg: 'from-emerald-500 to-emerald-600',
-                    border: 'rgba(52, 211, 153, 0.5)',
-                    text: 'text-emerald-400',
-                    badgeBg: 'bg-gradient-to-r from-emerald-500 to-emerald-600'
-                  },
-                  pending: {
-                    bg: 'from-amber-500 to-amber-600',
-                    border: 'rgba(251, 191, 36, 0.5)',
-                    text: 'text-amber-400',
-                    badgeBg: 'bg-gradient-to-r from-amber-500 to-amber-600'
-                  },
-                  completed: {
-                    bg: 'from-blue-500 to-blue-600',
-                    border: 'rgba(59, 130, 246, 0.5)',
-                    text: 'text-blue-400',
-                    badgeBg: 'bg-gradient-to-r from-blue-500 to-blue-600'
-                  },
-                  cancelled: {
-                    bg: 'from-rose-500 to-rose-600',
-                    border: 'rgba(244, 63, 94, 0.5)',
-                    text: 'text-rose-400',
-                    badgeBg: 'bg-gradient-to-r from-rose-500 to-rose-600'
-                  }
-                };
-                
-                const colors = statusColors[mission.status as MissionStatusKey];
-                const missionDate = mission.date instanceof Date 
-                  ? mission.date 
-                  : (mission.date as any).toDate();
-                
-                return (
-                  <div 
-                    key={mission.id}
-                    className="group relative overflow-hidden p-4 rounded-lg hover:bg-white/[0.03] transition-all duration-300 backdrop-blur-sm"
-                    style={{ 
-                      borderLeft: `2px solid ${colors.border}`,
-                      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.03)'
-                    }}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="relative">
-                        <div className="absolute inset-0 blur-sm opacity-50 rounded-lg bg-blue-500/30"></div>
-                        <div className="relative flex-shrink-0 p-2.5 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg">
-                          <Briefcase className="h-4 w-4" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="text-sm font-semibold text-white">
-                              {mission.title}
-                            </p>
-                            <p className="mt-0.5 text-xs text-gray-400">
-                              {mission.client}
-                            </p>
-                          </div>
-                          <div className="flex flex-col items-end ml-2">
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs ${colors.badgeBg} text-white shadow-lg`}>
-                              {mission.status === 'confirmed' ? (
-                                <>
-                                  <CheckCircle className="h-2.5 w-2.5 mr-1" />
-                                  Confirmée
-                                </>
-                              ) : mission.status === 'pending' ? (
-                                <>
-                                  <Clock className="h-2.5 w-2.5 mr-1" />
-                                  En attente
-                                </>
-                              ) : mission.status === 'completed' ? (
-                                <>
-                                  <CheckCircle className="h-2.5 w-2.5 mr-1" />
-                                  Terminée
-                                </>
-                              ) : (
-                                <>
-                                  <X className="h-2.5 w-2.5 mr-1" />
-                                  Annulée
-                                </>
-                              )}
-                            </span>
-                            <span className="mt-1 text-xs text-gray-500">
-                              {formatDate(missionDate)}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="mt-3 flex items-center justify-between">
-                          <div className="flex items-center">
-                            <div className="flex -space-x-2">
-                              {Array(Math.min(mission.workersCount, 3)).fill(0).map((_, i) => (
-                                <div key={i} className="h-6 w-6 rounded-full bg-gray-700 border border-gray-800 text-[9px] flex items-center justify-center text-white">
-                                  {String.fromCharCode(65 + i)}
-                                </div>
-                              ))}
-                              {mission.workersCount > 3 && (
-                                <div className="h-6 w-6 rounded-full bg-gray-800 border border-gray-700 text-[9px] flex items-center justify-center text-white">
-                                  +{mission.workersCount - 3}
-                                </div>
-                              )}
-                            </div>
-                            <span className="ml-2 text-xs text-gray-500">{mission.workersCount} intérimaires</span>
-                          </div>
-                          
-                          <button className="p-1 rounded-md hover:bg-white/5 transition">
-                            <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="text-center py-10">
-                <p className="text-gray-400">Aucune mission à venir</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Rendu des catégories d'emploi
-  const renderJobCategories = () => {
-    if (loading.categories) {
-      return (
-        <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-          <div className="absolute inset-0 bg-gray-950/40"></div>
-          <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-          <div className="relative p-6 h-80 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 text-primary-500 animate-spin" />
-          </div>
-        </div>
-      );
-    }
-    
-    if (error.categories) {
-      return (
-        <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-          <div className="absolute inset-0 bg-gray-950/40"></div>
-          <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-          <div className="relative p-6">
-            <div className="text-red-300 flex flex-col items-center justify-center p-10">
-              <AlertTriangle className="h-10 w-10 text-red-400 mb-4" />
-              <p>{error.categories}</p>
-              <button 
-                className="mt-4 px-4 py-2 bg-primary-600/30 hover:bg-primary-600/50 rounded-lg text-white transition-colors"
-                onClick={() => {
-                  setLoading(prev => ({ ...prev, categories: true }));
-                  getJobCategories().then(data => {
-                    setJobCategories(data);
-                    setError(prev => ({ ...prev, categories: null }));
-                  }).catch(err => {
-                    setError(prev => ({ ...prev, categories: "Impossible de charger les catégories d'emploi" }));
-                  }).finally(() => {
-                    setLoading(prev => ({ ...prev, categories: false }));
-                  });
-                }}
-              >
-                Réessayer
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Mapping des couleurs pour les catégories
-    const colorMapping = [
-      'from-violet-500 to-indigo-600',
-      'from-sky-500 to-cyan-600',
-      'from-emerald-500 to-teal-600',
-      'from-amber-500 to-yellow-600',
-      'from-rose-500 to-pink-600'
-    ];
-
-    return (
-      <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
-        {/* Background and glow */}
-        <div className="absolute inset-0 bg-gray-950/40"></div>
-        <div className="absolute -top-20 right-20 w-[300px] h-64 bg-emerald-600/5 -rotate-45 filter blur-3xl opacity-20"></div>
-        
-        {/* Glass border effect */}
-        <div className="absolute inset-0 rounded-xl border border-white/10"></div>
-        
-        <div className="relative p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-emerald-600/20 rounded-xl blur-md"></div>
-                <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl">
-                  <BarChart4 className="h-4 w-4" />
-                </div>
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white">
-                  Répartition des missions
-                </h2>
-                <div className="h-0.5 w-12 bg-emerald-500/40 mt-1 rounded-full"></div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="space-y-5">
-            {jobCategories.length > 0 ? (
-              jobCategories.map((category, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                      <div className={`h-3 w-3 rounded-full bg-gradient-to-r ${colorMapping[index % colorMapping.length]}`}></div>
-                      <span className="text-sm text-white">{category.name}</span>
-                    </div>
-                    <span className="text-sm text-gray-400">{category.percentage}%</span>
-                  </div>
-                  <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full bg-gradient-to-r ${colorMapping[index % colorMapping.length]}`}
-                      style={{ width: `${category.percentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-10">
-                <p className="text-gray-400">Aucune catégorie disponible</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   // Rendu du bloc des actions rapides
   const renderQuickActions = () => {
     const actions = [
-      { icon: User, label: 'Nouvel intérimaire', color: 'from-violet-500 to-indigo-600' },
-      { icon: FilePlus, label: 'Nouvelle mission', color: 'from-sky-500 to-cyan-600' },
-      { icon: FileText, label: 'Nouveau document', color: 'from-emerald-500 to-teal-600' },
-      { icon: Wallet, label: 'Facturation', color: 'from-amber-500 to-yellow-600' }
+      { icon: User, label: 'Nouveau candidat', color: 'from-primary-500 to-primary-600' },
+      { icon: Brain, label: 'Lancer recherche IA', color: 'from-secondary-500 to-secondary-600' },
+      { icon: FileText, label: 'Créer offre', color: 'from-primary-400 to-secondary-500' },
+      { icon: Bot, label: 'Assistant IA', color: 'from-secondary-400 to-primary-500' }
     ];
     
     return (
       <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
         {/* Background and glow */}
-        <div className="absolute inset-0 bg-gray-950/40"></div>
+        <div className="absolute inset-0 bg-white"></div>
         
         {/* Glass border effect */}
-        <div className="absolute inset-0 rounded-xl border border-white/10"></div>
+        <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
         
         <div className="relative p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-bold text-white">
+            <h2 className="text-lg font-bold text-dark">
               Actions rapides
             </h2>
-            <button className="p-1.5 rounded-lg hover:bg-white/5 transition">
-              <PlusCircle className="h-4 w-4 text-gray-400" />
+            <button className="p-1.5 rounded-lg hover:bg-dark/5 transition">
+              <PlusCircle className="h-4 w-4 text-dark/40" />
             </button>
           </div>
           
@@ -975,7 +475,7 @@ export const Dashboard = () => {
             {actions.map((action, index) => (
               <button 
                 key={index}
-                className="group flex flex-col items-center justify-center p-4 rounded-lg border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-300"
+                className="group flex flex-col items-center justify-center p-4 rounded-lg border border-dark/5 bg-dark/[0.02] hover:bg-dark/[0.05] transition-all duration-300"
               >
                 <div className="relative">
                   <div className={`absolute inset-0 blur-md opacity-40 rounded-full bg-gradient-to-r ${action.color}`}></div>
@@ -983,7 +483,7 @@ export const Dashboard = () => {
                     <action.icon className="h-5 w-5" />
                   </div>
                 </div>
-                <span className="mt-3 text-sm text-gray-300">{action.label}</span>
+                <span className="mt-3 text-sm text-dark/80">{action.label}</span>
               </button>
             ))}
           </div>
@@ -993,38 +493,38 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in text-white">
+    <div className="space-y-8 animate-fade-in text-dark bg-light min-h-screen p-6">
       {/* En-tête avec filtres */}
       <div className="relative">
-        <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary-600/20 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-secondary-600/20 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary-500/10 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-secondary-500/10 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-heading font-bold text-transparent bg-gradient-to-r from-primary-400 via-blue-400 to-secondary-400 bg-clip-text">
-              Tableau de bord
+            <h1 className="text-4xl font-heading font-bold text-dark">
+              Tableau de bord <span className="text-primary-500">IA</span>
             </h1>
             <div className="h-1 w-20 bg-gradient-to-r from-primary-500 to-secondary-500 mt-2 rounded-full"></div>
-            <p className="mt-3 text-gray-400 max-w-2xl">
-              Bienvenue sur votre espace de gestion. Consultez vos statistiques en temps réel et gérez vos ressources efficacement.
+            <p className="mt-3 text-dark/60 max-w-2xl">
+              Bienvenue sur votre plateforme de recrutement IA. Consultez vos statistiques en temps réel et gérez vos candidats efficacement.
             </p>
           </div>
           
           <div className="flex items-center space-x-3">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
+                <Search className="h-4 w-4 text-dark/40" />
               </div>
               <input 
                 type="text" 
                 placeholder="Rechercher..." 
-                className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-white text-sm"
+                className="pl-10 pr-4 py-2 bg-dark/5 border border-dark/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-dark text-sm"
               />
             </div>
             
-            <div className="flex items-center space-x-2 px-3 py-2 bg-white/5 rounded-xl border border-white/10">
-              <Calendar className="h-4 w-4 text-gray-400" />
-              <select className="bg-transparent border-none text-gray-300 text-sm focus:outline-none focus:ring-0">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-dark/5 rounded-xl border border-dark/10">
+              <Calendar className="h-4 w-4 text-dark/40" />
+              <select className="bg-transparent border-none text-dark/80 text-sm focus:outline-none focus:ring-0">
                 <option value="today">Aujourd'hui</option>
                 <option value="week">Cette semaine</option>
                 <option value="month">Ce mois-ci</option>
@@ -1032,7 +532,7 @@ export const Dashboard = () => {
               </select>
             </div>
             
-            <button className="p-2 bg-white/5 rounded-xl border border-white/10 text-gray-400 hover:text-white transition">
+            <button className="p-2 bg-dark/5 rounded-xl border border-dark/10 text-dark/40 hover:text-dark transition">
               <Settings className="h-5 w-5" />
             </button>
           </div>
@@ -1043,8 +543,8 @@ export const Dashboard = () => {
           {(['overview', 'workers', 'missions', 'analytics'] as const).map((tab) => {
             const labels = {
               overview: 'Vue d\'ensemble',
-              workers: 'Intérimaires',
-              missions: 'Missions',
+              workers: 'Candidats',
+              missions: 'Offres',
               analytics: 'Analyses'
             };
             
@@ -1053,8 +553,8 @@ export const Dashboard = () => {
                 key={tab}
                 className={`px-4 py-2 rounded-lg text-sm transition-all ${
                   activeTab === tab 
-                    ? 'bg-white/10 text-white' 
-                    : 'text-gray-400 hover:bg-white/5 hover:text-gray-300'
+                    ? 'bg-primary-500 text-white' 
+                    : 'text-dark/60 hover:bg-dark/5 hover:text-dark/80'
                 }`}
                 onClick={() => setActiveTab(tab)}
               >
@@ -1074,13 +574,126 @@ export const Dashboard = () => {
           {renderChart()}
         </div>
         <div>
-          {renderJobCategories()}
+          {/* Card for job categories with updated style */}
+          <div className="relative overflow-hidden rounded-xl backdrop-blur-md h-full transition-all">
+            <div className="absolute inset-0 bg-white"></div>
+            <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
+            <div className="relative p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-lg font-bold text-dark">Postes recherchés</h2>
+                  <div className="h-0.5 w-12 bg-secondary-500 mt-1 rounded-full"></div>
+                </div>
+                <button className="p-1.5 rounded-lg hover:bg-dark/5 transition">
+                  <MoreHorizontal className="h-4 w-4 text-dark/40" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                {!loading.categories && !error.categories && jobCategories.length > 0 ? (
+                  jobCategories.map((category, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          <span className="text-sm text-dark">{category.name}</span>
+                        </div>
+                        <span className="text-sm text-dark/60">{category.percentage}%</span>
+                      </div>
+                      <div className="h-2 w-full bg-dark/10 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-gradient-to-r from-primary-500 to-secondary-500"
+                          style={{ width: `${category.percentage}%` }}>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-dark/40">Chargement des catégories...</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {renderRecentActivities()}
-        {renderUpcomingMissions()}
+        {/* Simplified recent activities and upcoming missions */}
+        <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
+          <div className="absolute inset-0 bg-white"></div>
+          <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
+          <div className="relative p-6">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-dark">Derniers candidats matchés</h2>
+                <div className="h-0.5 w-12 bg-primary-500 mt-1 rounded-full"></div>
+              </div>
+              <div className="text-xs text-primary-500 flex items-center">
+                Voir tous <ArrowRight className="ml-1 h-3 w-3" />
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              {/* Simplified content - just placeholders */}
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="p-3 rounded-lg bg-dark/5 hover:bg-dark/10 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 rounded-full bg-primary-500/10">
+                        <Brain className="h-4 w-4 text-primary-500" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-dark">Développeur Full-Stack</div>
+                        <div className="text-xs text-dark/60">Score de matching : 95%</div>
+                      </div>
+                    </div>
+                    <span className="text-xs text-primary-500 px-2 py-1 rounded-full bg-primary-500/10">
+                      Contacté
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all">
+          <div className="absolute inset-0 bg-white"></div>
+          <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
+          <div className="relative p-6">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-dark">Entretiens programmés</h2>
+                <div className="h-0.5 w-12 bg-secondary-500 mt-1 rounded-full"></div>
+              </div>
+              <div className="text-xs text-secondary-500 flex items-center">
+                Voir tous <ArrowRight className="ml-1 h-3 w-3" />
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              {/* Simplified content - just placeholders */}
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="p-3 rounded-lg bg-dark/5 hover:bg-dark/10 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 rounded-full bg-secondary-500/10">
+                        <Calendar className="h-4 w-4 text-secondary-500" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-dark">Data Scientist</div>
+                        <div className="text-xs text-dark/60">Demain à 14:00</div>
+                      </div>
+                    </div>
+                    <button className="text-xs bg-secondary-500 text-white px-2 py-1 rounded-full">
+                      Préparer
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1088,31 +701,24 @@ export const Dashboard = () => {
           {renderQuickActions()}
         </div>
         <div>
-          <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all h-full bg-gray-950/40 border border-white/10">
-            <div className="p-6">
+          <div className="relative overflow-hidden rounded-xl backdrop-blur-md transition-all h-full">
+            <div className="absolute inset-0 bg-white"></div>
+            <div className="absolute inset-0 rounded-xl border border-dark/10"></div>
+            <div className="relative p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-bold text-white">
-                  Ressources
+                <h2 className="text-lg font-bold text-dark">
+                  Assistant IA
                 </h2>
               </div>
               
               <div className="space-y-3">
-                {[
-                  { title: 'Guide de démarrage', icon: FileText },
-                  { title: 'Formation en ligne', icon: Calendar },
-                  { title: 'Support technique', icon: MessageSquare }
-                ].map((resource, index) => (
-                  <a 
-                    key={index}
-                    href="#"
-                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-white/5 transition"
-                  >
-                    <div className="p-2 rounded-lg bg-white/5">
-                      <resource.icon className="h-4 w-4 text-gray-400" />
-                    </div>
-                    <span className="text-sm text-gray-300">{resource.title}</span>
-                  </a>
-                ))}
+                <div className="bg-primary-500/10 rounded-lg p-4 text-center">
+                  <Zap className="h-10 w-10 text-primary-500 mx-auto mb-2" /> 
+                  <p className="text-sm text-dark/80">Votre assistant IA est prêt à vous aider dans votre recrutement</p>
+                  <button className="mt-3 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm transition-colors">
+                    Poser une question
+                  </button>
+                </div>
               </div>
             </div>
           </div>

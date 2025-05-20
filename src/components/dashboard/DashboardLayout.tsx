@@ -5,19 +5,20 @@ import { Sidebar } from './Sidebar';
 export const DashboardLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Appliquer le mode sombre par défaut
+  // Ne pas appliquer le mode sombre par défaut
   useEffect(() => {
-    document.documentElement.classList.add('dark');
+    // Assurer que le mode clair est appliqué
+    document.documentElement.classList.remove('dark');
   }, []);
 
   return (
-    <div className="grid grid-cols-[auto_1fr] h-screen bg-gradient-to-br from-gray-900 via-gray-900/95 to-gray-800 overflow-hidden">
+    <div className="grid grid-cols-[auto_1fr] h-screen bg-white overflow-hidden">
       <Sidebar 
         isOpen={sidebarOpen} 
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
       />
-      <main className="overflow-y-auto">
-        <div className="max-w-7xl w-full mx-auto p-6">
+      <main className="overflow-y-auto w-full">
+        <div className="w-full p-6">
           <Outlet />
         </div>
       </main>

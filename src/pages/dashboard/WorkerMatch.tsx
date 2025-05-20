@@ -47,16 +47,16 @@ const WorkerMatch: React.FC = () => {
 
   return (
     <div className="bg-gray-950 text-white min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <Link to="/dashboard/workers" className="flex items-center text-gray-400 hover:text-white mr-4 transition-colors">
               <ArrowLeft size={20} className="mr-2" />
-              Retour à la liste
+              Retour au CRM des talents
             </Link>
             <h1 className="text-2xl md:text-3xl font-bold">
-              Correspondances d'emploi
+              IA Matching Stratégique
             </h1>
           </div>
         </div>
@@ -111,7 +111,8 @@ const WorkerMatch: React.FC = () => {
 
               {worker.skills && worker.skills.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-2">Compétences</h3>
+                  <h3 className="text-lg font-semibold mb-2">Compétences analysées par IA</h3>
+                  <p className="text-sm text-gray-400 mb-3">Compétences identifiées et évaluées automatiquement par notre moteur d'IA</p>
                   <div className="flex flex-wrap gap-2">
                     {worker.skills.map((skill: string, index: number) => (
                       <span 
@@ -126,20 +127,37 @@ const WorkerMatch: React.FC = () => {
               )}
             </div>
             
+            {/* Analyse IA et Matching Stratégique */}
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold mb-2">Analyse IA Stratégique</h3>
+              <p className="text-gray-300">OYA centralise et analyse automatiquement les données de ce profil pour identifier les meilleures opportunités professionnelles, sans intermédiaires coûteux.</p>
+            </div>
+            
             {/* Résultats de correspondance */}
             {candidateProfile && (
-              <MatchingResults candidate={candidateProfile} limit={20} />
+              <>
+                <div className="bg-blue-900/30 p-4 rounded-lg mb-4">
+                  <div className="flex items-center mb-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a8 8 0 0 1 8 8v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a8 8 0 0 1 8-8z"></path><path d="M9 22v-4h6v4"></path><path d="M15 22V10a3 3 0 0 0-6 0v12"></path></svg>
+                    </div>
+                    <h3 className="text-lg font-semibold">Plateforme IA RH Intelligente</h3>
+                  </div>
+                  <p className="text-gray-300 pl-11">Notre moteur d'IA analyse en temps réel les compétences, l'expérience et les préférences pour identifier les meilleures correspondances sur le marché.</p>
+                </div>
+                <MatchingResults candidate={candidateProfile} limit={20} />
+              </>
             )}
           </div>
         ) : (
           <div className="bg-gray-900 p-8 rounded-lg text-center">
-            <p className="text-xl mb-2">Travailleur non trouvé</p>
-            <p className="text-gray-400 mb-4">Le travailleur demandé n'existe pas ou a été supprimé.</p>
+            <p className="text-xl mb-2">Profil non trouvé</p>
+            <p className="text-gray-400 mb-4">La plateforme IA OYA n'a pas pu localiser ce profil dans la base de données centralisée.</p>
             <Link
               to="/dashboard/workers"
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md inline-block transition-colors"
             >
-              Retour à la liste des travailleurs
+              Retour au CRM des talents
             </Link>
           </div>
         )}
@@ -148,4 +166,4 @@ const WorkerMatch: React.FC = () => {
   );
 };
 
-export default WorkerMatch; 
+export default WorkerMatch;

@@ -68,7 +68,8 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ candidate, limit = 10
   return (
     <div className="bg-gray-900 rounded-lg shadow-lg overflow-hidden">
       <div className="p-6">
-        <h2 className="text-xl font-bold mb-4">Correspondances d'emploi</h2>
+        <h2 className="text-xl font-bold mb-4">Analyse IA des opportunités stratégiques</h2>
+        <p className="text-gray-400 mb-4">Notre plateforme IA RH intelligente a identifié et évalué ces opportunités en fonction du profil et du marché actuel, sans intermédiaires.</p>
         
         {/* Filtres et recherche */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -190,8 +191,12 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ candidate, limit = 10
                         <span className="text-gray-200 font-medium mr-4">{selectedJob.company.name}</span>
                       </div>
                     </div>
-                    <div className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold">
-                      Postuler
+                    <div className="flex flex-col">
+                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+                        Contact automatisé
+                      </button>
+                      <span className="text-xs text-gray-400 mt-1 text-center">Prise de contact IA sans intermédiaire</span>
                     </div>
                   </div>
                   
@@ -226,7 +231,8 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ candidate, limit = 10
                   
                   {selectedJob.requirements && selectedJob.requirements.length > 0 && (
                     <div className="mb-6">
-                      <h3 className="text-lg font-semibold mb-3">Requis</h3>
+                      <h3 className="text-lg font-semibold mb-3">Critères évalués par IA</h3>
+                      <p className="text-sm text-gray-400 mb-3">Exigences analysées automatiquement par notre plateforme IA RH</p>
                       <ul className="space-y-2">
                         {selectedJob.requirements.map((req, index) => (
                           <li key={index} className="flex items-start">
@@ -240,7 +246,8 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ candidate, limit = 10
                   
                   {selectedJob.skills && selectedJob.skills.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Compétences</h3>
+                      <h3 className="text-lg font-semibold mb-3">Compétences analysées par IA</h3>
+                      <p className="text-sm text-gray-400 mb-3">Notre moteur d'IA a évalué la correspondance entre les compétences requises et celles du candidat</p>
                       <div className="flex flex-wrap gap-2">
                         {selectedJob.skills.map((skill, index) => (
                           <span
@@ -267,8 +274,9 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ candidate, limit = 10
           </div>
         ) : (
           <div className="bg-gray-850 rounded-lg p-8 text-center">
-            <p className="text-xl mb-2">Aucune correspondance trouvée</p>
-            <p className="text-gray-400">Nous n'avons pas trouvé d'offres d'emploi correspondant au profil de compétences de ce candidat.</p>
+            <p className="text-xl mb-2">Aucune opportunité stratégique identifiée</p>
+            <p className="text-gray-400">Notre plateforme IA RH n'a pas identifié d'opportunités correspondant au profil de ce talent dans notre base de données centralisée.</p>
+            <p className="text-gray-400 mt-2">La plateforme continue d'analyser le marché en temps réel pour identifier de nouvelles opportunités.</p>
           </div>
         )}
       </div>
@@ -276,4 +284,4 @@ const MatchingResults: React.FC<MatchingResultsProps> = ({ candidate, limit = 10
   );
 };
 
-export default MatchingResults; 
+export default MatchingResults;

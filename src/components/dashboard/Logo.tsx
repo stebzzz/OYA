@@ -5,7 +5,7 @@ interface LogoProps {
   variant?: 'light' | 'dark' | 'color';
 }
 
-export const Logo: React.FC<LogoProps> = ({ size = 'md', variant = 'color' }) => {
+export const Logo: React.FC<LogoProps> = ({ size = 'md', variant = 'dark' }) => {
   const sizeClasses = {
     sm: 'h-8',
     md: 'h-10',
@@ -40,4 +40,4 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', variant = 'color' }) =>
       </div>
     </div>
   );
-}; 
+};

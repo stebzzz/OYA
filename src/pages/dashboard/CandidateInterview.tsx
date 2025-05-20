@@ -92,19 +92,19 @@ export const CandidateInterview = () => {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <Loader2 className="h-10 w-10 text-primary-500 animate-spin" />
+        <Loader2 className="h-10 w-10 text-orange animate-spin" />
       </div>
     );
   }
 
   if (error || !candidate) {
     return (
-      <div className="bg-red-500/10 border border-red-400/20 p-6 rounded-xl text-red-300 flex flex-col items-center justify-center">
+      <div className="bg-red-500/10 border border-red-400/20 p-6 rounded-xl text-red-400 flex flex-col items-center justify-center">
         <AlertTriangle className="h-12 w-12 text-red-400 mb-4" />
         <p className="text-lg">{error || 'Candidat introuvable'}</p>
         <Link 
           to="/dashboard/candidates" 
-          className="mt-4 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center text-white transition-colors"
+          className="mt-4 px-4 py-2 bg-bleu hover:bg-bleu/80 rounded-lg flex items-center text-ivoire transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           <span>Retour à la liste</span>
@@ -120,13 +120,13 @@ export const CandidateInterview = () => {
         <div className="flex items-center">
           <Link 
             to={`/dashboard/candidates/${id}`}
-            className="mr-4 p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            className="mr-4 p-2 rounded-lg hover:bg-ivoire/10 transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-gray-400" />
+            <ArrowLeft className="h-5 w-5 text-bleu" />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-white">Planifier un entretien</h1>
-            <p className="text-gray-400">
+            <h1 className="text-3xl font-bold text-bleu">Planifier un entretien</h1>
+            <p className="text-gray-600">
               {candidate.firstName} {candidate.lastName}
             </p>
           </div>
@@ -136,10 +136,10 @@ export const CandidateInterview = () => {
       {/* Contenu principal */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Informations du candidat */}
-        <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+        <div className="bg-ivoire rounded-xl border border-gray-200 p-6 shadow-sm">
           <div className="space-y-4">
             <div className="flex items-center">
-              <div className="h-12 w-12 rounded-full bg-primary-700/30 flex items-center justify-center text-primary-300 mr-4">
+              <div className="h-12 w-12 rounded-full bg-violet/20 flex items-center justify-center text-violet mr-4">
                 {candidate.avatar ? (
                   <img className="h-12 w-12 rounded-full" src={candidate.avatar} alt="" />
                 ) : (
@@ -147,18 +147,18 @@ export const CandidateInterview = () => {
                 )}
               </div>
               <div>
-                <h4 className="text-white font-medium">{candidate.firstName} {candidate.lastName}</h4>
-                <p className="text-gray-400 text-sm">{candidate.email}</p>
+                <h4 className="text-bleu font-medium">{candidate.firstName} {candidate.lastName}</h4>
+                <p className="text-gray-600 text-sm">{candidate.email}</p>
               </div>
             </div>
             
             <div>
-              <p className="text-sm text-gray-400 mb-1">Compétences clés</p>
+              <p className="text-sm text-gray-500 mb-1">Compétences clés</p>
               <div className="flex flex-wrap gap-2">
                 {candidate.skills.slice(0, 5).map((skill, index) => (
                   <span 
                     key={index} 
-                    className="px-2.5 py-1 text-xs font-medium rounded-full bg-primary-500/10 text-primary-400"
+                    className="px-2.5 py-1 text-xs font-medium rounded-full bg-violet/10 text-violet"
                   >
                     {skill}
                   </span>
@@ -167,25 +167,25 @@ export const CandidateInterview = () => {
             </div>
             
             <div>
-              <p className="text-sm text-gray-400 mb-1">Disponibilité</p>
-              <p className="text-white">{candidate.availability || 'Non spécifiée'}</p>
+              <p className="text-sm text-gray-500 mb-1">Disponibilité</p>
+              <p className="text-bleu">{candidate.availability || 'Non spécifiée'}</p>
             </div>
           </div>
         </div>
         
         {/* Formulaire d'entretien */}
-        <div className="md:col-span-2 bg-gray-800/50 rounded-xl border border-gray-700 p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Détails de l'entretien</h3>
+        <div className="md:col-span-2 bg-ivoire rounded-xl border border-gray-200 p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-bleu mb-4">Détails de l'entretien</h3>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="date" className="block text-sm font-medium text-gray-400 mb-1">
+                <label htmlFor="date" className="block text-sm font-medium text-gray-600 mb-1">
                   Date
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <CalendarIcon className="h-5 w-5 text-gray-500" />
+                    <CalendarIcon className="h-5 w-5 text-orange" />
                   </div>
                   <input
                     type="date"
@@ -193,19 +193,19 @@ export const CandidateInterview = () => {
                     name="date"
                     value={interviewForm.date}
                     onChange={handleInputChange}
-                    className="block w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+                    className="block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-bleu placeholder-gray-400 focus:outline-none focus:border-violet"
                     required
                   />
                 </div>
               </div>
               
               <div>
-                <label htmlFor="time" className="block text-sm font-medium text-gray-400 mb-1">
+                <label htmlFor="time" className="block text-sm font-medium text-gray-600 mb-1">
                   Heure
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Clock className="h-5 w-5 text-gray-500" />
+                    <Clock className="h-5 w-5 text-orange" />
                   </div>
                   <input
                     type="time"
@@ -213,14 +213,14 @@ export const CandidateInterview = () => {
                     name="time"
                     value={interviewForm.time}
                     onChange={handleInputChange}
-                    className="block w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+                    className="block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-bleu placeholder-gray-400 focus:outline-none focus:border-violet"
                     required
                   />
                 </div>
               </div>
               
               <div>
-                <label htmlFor="duration" className="block text-sm font-medium text-gray-400 mb-1">
+                <label htmlFor="duration" className="block text-sm font-medium text-gray-600 mb-1">
                   Durée (minutes)
                 </label>
                 <select
@@ -228,7 +228,7 @@ export const CandidateInterview = () => {
                   name="duration"
                   value={interviewForm.duration}
                   onChange={handleInputChange}
-                  className="block w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary-500"
+                  className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-bleu focus:outline-none focus:border-violet"
                 >
                   <option value={30}>30 minutes</option>
                   <option value={45}>45 minutes</option>
@@ -239,7 +239,7 @@ export const CandidateInterview = () => {
               </div>
               
               <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-400 mb-1">
+                <label htmlFor="type" className="block text-sm font-medium text-gray-600 mb-1">
                   Type d'entretien
                 </label>
                 <select
@@ -247,7 +247,7 @@ export const CandidateInterview = () => {
                   name="type"
                   value={interviewForm.type}
                   onChange={handleInputChange}
-                  className="block w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary-500"
+                  className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-bleu focus:outline-none focus:border-violet"
                 >
                   <option value="remote">Entretien à distance</option>
                   <option value="in-person">Entretien en personne</option>
@@ -256,12 +256,12 @@ export const CandidateInterview = () => {
               
               {interviewForm.type === 'in-person' && (
                 <div className="md:col-span-2">
-                  <label htmlFor="location" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label htmlFor="location" className="block text-sm font-medium text-gray-600 mb-1">
                     Lieu
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <MapPin className="h-5 w-5 text-gray-500" />
+                      <MapPin className="h-5 w-5 text-orange" />
                     </div>
                     <input
                       type="text"
@@ -270,19 +270,19 @@ export const CandidateInterview = () => {
                       value={interviewForm.location}
                       onChange={handleInputChange}
                       placeholder="Adresse de l'entretien"
-                      className="block w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+                      className="block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-bleu placeholder-gray-400 focus:outline-none focus:border-violet"
                     />
                   </div>
                 </div>
               )}
               
               <div className="md:col-span-2">
-                <label htmlFor="participants" className="block text-sm font-medium text-gray-400 mb-1">
+                <label htmlFor="participants" className="block text-sm font-medium text-gray-600 mb-1">
                   Participants (séparés par des virgules)
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Users className="h-5 w-5 text-gray-500" />
+                    <Users className="h-5 w-5 text-orange" />
                   </div>
                   <input
                     type="text"
@@ -291,13 +291,13 @@ export const CandidateInterview = () => {
                     value={interviewForm.participants}
                     onChange={handleInputChange}
                     placeholder="Ex: Marie Dupont, Jean Martin"
-                    className="block w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+                    className="block w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-bleu placeholder-gray-400 focus:outline-none focus:border-violet"
                   />
                 </div>
               </div>
               
               <div className="md:col-span-2">
-                <label htmlFor="notes" className="block text-sm font-medium text-gray-400 mb-1">
+                <label htmlFor="notes" className="block text-sm font-medium text-gray-600 mb-1">
                   Notes
                 </label>
                 <textarea
@@ -307,7 +307,7 @@ export const CandidateInterview = () => {
                   onChange={handleInputChange}
                   rows={4}
                   placeholder="Informations complémentaires, sujets à aborder..."
-                  className="block w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 resize-none"
+                  className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-bleu placeholder-gray-400 focus:outline-none focus:border-violet resize-none"
                 ></textarea>
               </div>
             </div>
@@ -316,7 +316,7 @@ export const CandidateInterview = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors flex items-center disabled:opacity-50"
+                className="px-6 py-2 bg-violet hover:bg-violet/80 text-ivoire rounded-lg transition-colors flex items-center disabled:opacity-50"
               >
                 {saving ? (
                   <>
@@ -336,13 +336,13 @@ export const CandidateInterview = () => {
       </div>
       
       {/* Section entretiens précédents */}
-      <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+      <div className="bg-ivoire rounded-xl border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white">Entretiens précédents</h3>
+          <h3 className="text-lg font-semibold text-bleu">Entretiens précédents</h3>
         </div>
         
-        <div className="text-center py-8 text-gray-400">
-          <CalendarIcon className="h-12 w-12 mx-auto mb-3 text-gray-600" />
+        <div className="text-center py-8 text-gray-500">
+          <CalendarIcon className="h-12 w-12 mx-auto mb-3 text-gray-400" />
           <p>Aucun entretien précédent</p>
         </div>
       </div>

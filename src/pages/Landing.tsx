@@ -18,7 +18,7 @@ export const Landing = () => {
             <div className="flex flex-col">
               <h1 className="text-2xl font-heading font-bold text-dark">
                 oya
-              </h1>
+            </h1>
               <span className="text-xs tracking-[1.48px] text-dark">intelligence</span>
             </div>
           </div>
@@ -519,7 +519,7 @@ export const Landing = () => {
                 <div className="flex flex-col">
                   <h1 className="text-2xl font-heading font-bold text-dark">
                     oya
-                  </h1>
+                </h1>
                   <span className="text-xs tracking-[1.48px] text-dark">intelligence</span>
                 </div>
               </div>

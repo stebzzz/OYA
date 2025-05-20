@@ -9,8 +9,8 @@ import { useAuthStore } from '../../store/authStore';
 const mockMissions = [
   {
     id: '1',
-    title: 'Soudeur TIG',
-    client: 'Industrie Métallique SA',
+    title: 'Développeur Full-Stack',
+    client: 'Tech Solutions SA',
     location: 'Lyon',
     startDate: '2024-03-15',
     endDate: '2024-04-15',
@@ -20,8 +20,8 @@ const mockMissions = [
   },
   {
     id: '2',
-    title: 'Manutentionnaire',
-    client: 'Logistique Express',
+    title: 'UX/UI Designer',
+    client: 'Digital Express',
     location: 'Paris',
     startDate: '2024-03-20',
     endDate: '2024-03-25',
@@ -31,8 +31,8 @@ const mockMissions = [
   },
   {
     id: '3',
-    title: 'Plombier',
-    client: 'SantéPlus',
+    title: 'Data Scientist',
+    client: 'HealthTech+',
     location: 'Marseille',
     startDate: '2024-04-01',
     endDate: '2024-04-30',
@@ -42,8 +42,8 @@ const mockMissions = [
   },
   {
     id: '4',
-    title: 'Électricien industriel',
-    client: 'Électro Solutions',
+    title: 'DevOps Engineer',
+    client: 'Cloud Solutions',
     location: 'Bordeaux',
     startDate: '2024-03-28',
     endDate: '2024-05-15',
@@ -53,8 +53,8 @@ const mockMissions = [
   },
   {
     id: '5',
-    title: 'Cariste',
-    client: 'Entrepôts Nationaux',
+    title: 'Product Manager',
+    client: 'Startup Nation',
     location: 'Lille',
     startDate: '2024-04-10',
     endDate: '2024-04-25',
@@ -65,8 +65,8 @@ const mockMissions = [
 ];
 
 const statusColors = {
-  open: { bg: 'bg-emerald-400/10', text: 'text-emerald-400', dot: 'bg-emerald-400', label: 'À pourvoir' },
-  in_progress: { bg: 'bg-blue-400/10', text: 'text-blue-400', dot: 'bg-blue-400', label: 'En cours' },
+  open: { bg: 'bg-emerald-500/10', text: 'text-emerald-500', dot: 'bg-emerald-500', label: 'À pourvoir' },
+  in_progress: { bg: 'bg-violet/10', text: 'text-violet', dot: 'bg-violet', label: 'En cours' },
   completed: { bg: 'bg-gray-400/10', text: 'text-gray-400', dot: 'bg-gray-400', label: 'Terminée' },
   cancelled: { bg: 'bg-red-400/10', text: 'text-red-400', dot: 'bg-red-400', label: 'Annulée' }
 };
@@ -94,8 +94,8 @@ export const MissionsList = () => {
         setMissions(fetchedMissions);
         setError(null);
       } catch (err) {
-        console.error('Erreur lors du chargement des missions:', err);
-        setError('Impossible de charger les missions. Veuillez réessayer.');
+        console.error('Erreur lors du chargement des offres:', err);
+        setError('Impossible de charger les offres. Veuillez réessayer.');
         // Fallback aux données mockées en cas d'erreur
         setMissions(mockMissions as unknown as Mission[]);
       } finally {
@@ -140,7 +140,7 @@ export const MissionsList = () => {
       const fetchedMissions = await getMissions(user.uid);
       setMissions(fetchedMissions);
     } catch (err) {
-      console.error('Erreur lors du rechargement des missions:', err);
+      console.error('Erreur lors du rechargement des offres:', err);
     }
   };
 
@@ -160,43 +160,43 @@ export const MissionsList = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white">Missions</h1>
+        <h1 className="text-2xl font-bold text-bleu">Offres d'emploi</h1>
         <div className="flex space-x-3">
           <button
             onClick={() => setIsApproveModalOpen(true)}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center space-x-2"
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-ivoire rounded-lg transition-colors flex items-center space-x-2"
           >
             <CheckSquare className="h-5 w-5" />
             <span>Approbation Rapide</span>
           </button>
           <button
             onClick={() => setIsImportModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center space-x-2"
+            className="px-4 py-2 bg-violet hover:bg-violet/80 text-ivoire rounded-lg transition-colors flex items-center space-x-2"
           >
             <Upload className="h-5 w-5" />
             <span>Importer</span>
           </button>
           <button 
             onClick={() => setIsNewMissionModalOpen(true)}
-            className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors flex items-center space-x-2"
+            className="px-4 py-2 bg-orange hover:bg-orange/80 text-ivoire rounded-lg transition-colors flex items-center space-x-2"
           >
             <Plus className="h-5 w-5" />
-            <span>Nouvelle mission</span>
+            <span>Nouvelle offre</span>
           </button>
         </div>
       </div>
       
       {/* Filtres */}
-      <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+      <div className="bg-ivoire rounded-xl p-4 border border-gray-200 shadow-sm">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-grow">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-5 w-5 text-orange" />
             </div>
             <input
               type="text"
-              placeholder="Rechercher une mission..."
-              className="pl-10 pr-4 py-2 w-full bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-gray-200"
+              placeholder="Rechercher une offre..."
+              className="pl-10 pr-4 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-violet focus:border-violet text-bleu"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -205,7 +205,7 @@ export const MissionsList = () => {
           <div className="flex gap-3">
             <div className="relative">
               <button
-                className="flex items-center px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 text-gray-200"
+                className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 text-bleu"
                 onClick={() => document.getElementById('status-dropdown')?.classList.toggle('hidden')}
               >
                 <Filter className="h-4 w-4 mr-2" />
@@ -213,10 +213,10 @@ export const MissionsList = () => {
                 <ChevronDown className="h-4 w-4 ml-2" />
               </button>
               
-              <div id="status-dropdown" className="absolute mt-2 w-40 bg-gray-700 border border-gray-600 rounded-lg shadow-lg overflow-hidden z-10 hidden">
+              <div id="status-dropdown" className="absolute mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden z-10 hidden">
                 <div className="p-2">
                   <button
-                    className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-600 text-gray-200"
+                    className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-100 text-bleu"
                     onClick={() => {
                       setFilterStatus(null);
                       document.getElementById('status-dropdown')?.classList.add('hidden');
@@ -229,7 +229,7 @@ export const MissionsList = () => {
                   {Object.entries(statusColors).map(([status, { label }]) => (
                     <button
                       key={status}
-                      className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-600 text-gray-200"
+                      className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-100 text-bleu"
                       onClick={() => {
                         setFilterStatus(status);
                         document.getElementById('status-dropdown')?.classList.add('hidden');
@@ -245,7 +245,7 @@ export const MissionsList = () => {
             
             <div className="relative">
               <button
-                className="flex items-center px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 text-gray-200"
+                className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 text-bleu"
                 onClick={() => document.getElementById('location-dropdown')?.classList.toggle('hidden')}
               >
                 <MapPin className="h-4 w-4 mr-2" />
@@ -253,10 +253,10 @@ export const MissionsList = () => {
                 <ChevronDown className="h-4 w-4 ml-2" />
               </button>
               
-              <div id="location-dropdown" className="absolute mt-2 w-48 bg-gray-700 border border-gray-600 rounded-lg shadow-lg overflow-hidden z-10 hidden">
+              <div id="location-dropdown" className="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden z-10 hidden">
                 <div className="p-2">
                   <button
-                    className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-600 text-gray-200"
+                    className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-100 text-bleu"
                     onClick={() => {
                       setFilterLocation(null);
                       document.getElementById('location-dropdown')?.classList.add('hidden');
@@ -269,7 +269,7 @@ export const MissionsList = () => {
                   {allLocations.map(location => (
                     <button
                       key={location}
-                      className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-600 text-gray-200"
+                      className="flex items-center px-3 py-2 w-full text-left rounded hover:bg-gray-100 text-bleu"
                       onClick={() => {
                         setFilterLocation(location);
                         document.getElementById('location-dropdown')?.classList.add('hidden');
@@ -289,14 +289,14 @@ export const MissionsList = () => {
       {/* État de chargement */}
       {isLoading && (
         <div className="flex justify-center items-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary-500 border-r-transparent"></div>
-          <span className="ml-3 text-gray-300">Chargement des missions...</span>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange border-r-transparent"></div>
+          <span className="ml-3 text-bleu">Chargement des offres...</span>
         </div>
       )}
       
       {/* Message d'erreur */}
       {error && !isLoading && (
-        <div className="p-4 bg-red-900/30 border border-red-800 rounded-lg text-red-300 mb-4">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 mb-4">
           {error}
         </div>
       )}
@@ -306,10 +306,10 @@ export const MissionsList = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredMissions.length > 0 ? (
             filteredMissions.map((mission) => (
-              <div key={mission.id} className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden hover:border-primary-500/50 transition-colors group">
+              <div key={mission.id} className="bg-ivoire rounded-xl border border-gray-200 overflow-hidden hover:border-violet/50 transition-colors group shadow-sm">
                 <div className="p-5">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-lg font-semibold text-bleu">
                       {mission.title}
                     </h3>
                     <div className={`flex items-center ${statusColors[mission.status as keyof typeof statusColors]?.bg || 'bg-gray-400/10'} ${statusColors[mission.status as keyof typeof statusColors]?.text || 'text-gray-400'} px-2.5 py-1 rounded-full text-xs font-medium`}>
@@ -318,40 +318,40 @@ export const MissionsList = () => {
                     </div>
                   </div>
                   
-                  <p className="text-sm text-gray-300 mb-4">
+                  <p className="text-sm text-gray-600 mb-4">
                     {mission.company}
                   </p>
                   
                   <div className="space-y-3">
                     <div className="flex items-center text-sm">
-                      <MapPin className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
-                      <span className="text-gray-300">{mission.location}</span>
+                      <MapPin className="h-4 w-4 text-orange mr-2 flex-shrink-0" />
+                      <span className="text-gray-700">{mission.location}</span>
                     </div>
                     
                     <div className="flex items-center text-sm">
-                      <Calendar className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
-                      <span className="text-gray-300">
+                      <Calendar className="h-4 w-4 text-orange mr-2 flex-shrink-0" />
+                      <span className="text-gray-700">
                         {formatDate(mission.startDate)} - {formatDate(mission.endDate)}
                       </span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex border-t border-gray-700">
-                  <button className="flex-1 py-3 text-center text-sm text-gray-300 hover:text-white hover:bg-gray-700 transition-colors">
+                <div className="flex border-t border-gray-200">
+                  <button className="flex-1 py-3 text-center text-sm text-bleu hover:text-violet hover:bg-gray-100 transition-colors">
                     Voir détails
                   </button>
-                  <button className="flex-1 py-3 text-center text-sm text-gray-300 hover:text-white hover:bg-gray-700 transition-colors border-l border-gray-700">
-                    Attribuer
+                  <button className="flex-1 py-3 text-center text-sm text-bleu hover:text-violet hover:bg-gray-100 transition-colors border-l border-gray-200">
+                    Matching IA
                   </button>
                 </div>
               </div>
             ))
           ) : (
-            <div className="col-span-full p-12 text-center text-gray-400 bg-gray-800/30 rounded-xl border border-gray-700">
+            <div className="col-span-full p-12 text-center text-gray-500 bg-gray-100 rounded-xl border border-gray-200">
               {filterStatus || filterLocation || searchTerm ? 
-                'Aucune mission ne correspond à votre recherche' : 
-                'Aucune mission disponible. Créez votre première mission !'}
+                'Aucune offre ne correspond à votre recherche' : 
+                'Aucune offre disponible. Créez votre première offre d\'emploi !'}
             </div>
           )}
         </div>

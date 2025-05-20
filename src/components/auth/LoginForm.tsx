@@ -43,7 +43,7 @@ export const LoginForm = () => {
             <LogIn className="w-8 h-8 text-primary-600" />
           </div>
           <h1 className="text-2xl font-bold font-heading text-gray-800">Connexion à Oya</h1>
-          <p className="text-gray-500 mt-2 text-center">La plateforme d'intérim innovante</p>
+          <p className="text-gray-500 mt-2 text-center">La plateforme RH innovante</p>
         </div>
 
         {error && (

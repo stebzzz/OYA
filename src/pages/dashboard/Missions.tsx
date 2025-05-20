@@ -3,10 +3,10 @@ import { MissionsList } from '../../components/missions/MissionsList';
 
 const Missions: React.FC = () => {
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="w-full">
       <MissionsList />
     </div>
   );
 };
 
-export default Missions; 
+export default Missions;

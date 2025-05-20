@@ -15,7 +15,9 @@ import {
   ExternalLink,
   Loader2,
   AlertTriangle,
-  Clock
+  Clock,
+  Brain,
+  Star
 } from 'lucide-react';
 import { getWorkerById, Worker, deleteWorker } from '../../services/workersService';
 
@@ -31,7 +33,7 @@ export const WorkerDetail = () => {
   useEffect(() => {
     const loadWorker = async () => {
       if (!id) {
-        setError('ID de l\'intérimaire non spécifié');
+        setError('ID du candidat non spécifié');
         setLoading(false);
         return;
       }
@@ -41,7 +43,7 @@ export const WorkerDetail = () => {
         if (data) {
           setWorker(data);
         } else {
-          setError('Intérimaire non trouvé');
+          setError('Candidat non trouvé');
         }
       } catch (err) {
         console.error('Erreur lors du chargement des données:', err);
@@ -64,7 +66,7 @@ export const WorkerDetail = () => {
     });
   };
 
-  // Fonction pour supprimer l'intérimaire
+  // Fonction pour supprimer le candidat
   const handleDelete = async () => {
     if (!id) return;
     
@@ -74,7 +76,7 @@ export const WorkerDetail = () => {
       navigate('/dashboard/workers');
     } catch (err) {
       console.error('Erreur lors de la suppression:', err);
-      setError('Erreur lors de la suppression de l\'intérimaire');
+      setError('Erreur lors de la suppression du candidat');
       setIsDeleting(false);
       setShowDeleteConfirm(false);
     }
@@ -90,12 +92,12 @@ export const WorkerDetail = () => {
 
   if (error || !worker) {
     return (
-      <div className="bg-red-500/10 border border-red-400/20 p-6 rounded-xl text-red-300 flex flex-col items-center justify-center">
-        <AlertTriangle className="h-12 w-12 text-red-400 mb-4" />
-        <p className="text-lg">{error || 'Intérimaire introuvable'}</p>
+      <div className="bg-primary-500/10 border border-primary-400/20 p-6 rounded-xl text-primary-300 flex flex-col items-center justify-center">
+        <AlertTriangle className="h-12 w-12 text-primary-400 mb-4" />
+        <p className="text-lg">{error || 'Candidat introuvable'}</p>
         <Link 
           to="/dashboard/workers" 
-          className="mt-4 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center text-white transition-colors"
+          className="mt-4 px-4 py-2 bg-dark hover:bg-dark/80 rounded-lg flex items-center text-white transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           <span>Retour à la liste</span>
@@ -106,29 +108,29 @@ export const WorkerDetail = () => {
 
   // Déterminer les couleurs de statut
   const statusColors = {
-    active: { bg: 'bg-emerald-400/10', text: 'text-emerald-400', dot: 'bg-emerald-400' },
-    busy: { bg: 'bg-amber-400/10', text: 'text-amber-400', dot: 'bg-amber-400' },
-    inactive: { bg: 'bg-gray-400/10', text: 'text-gray-400', dot: 'bg-gray-400' }
+    active: { bg: 'bg-emerald-400/10', text: 'text-emerald-600', dot: 'bg-emerald-400' },
+    busy: { bg: 'bg-primary-500/10', text: 'text-primary-500', dot: 'bg-primary-500' },
+    inactive: { bg: 'bg-dark/10', text: 'text-dark/60', dot: 'bg-dark/40' }
   };
   
   const statusColor = statusColors[worker.status];
   const statusText = worker.status === 'active' ? 'Disponible' : 
-                      worker.status === 'busy' ? 'En mission' : 'Inactif';
+                      worker.status === 'busy' ? 'En entretien' : 'Inactif';
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in bg-light text-dark p-6 rounded-xl">
       {/* En-tête */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center">
           <Link 
             to="/dashboard/workers"
-            className="mr-4 p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            className="mr-4 p-2 rounded-lg hover:bg-dark/5 transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-gray-400" />
+            <ArrowLeft className="h-5 w-5 text-dark/60" />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-white">{worker.firstName} {worker.lastName}</h1>
-            <div className="flex items-center mt-1 text-gray-400">
+            <h1 className="text-3xl font-bold text-dark">{worker.firstName} {worker.lastName}</h1>
+            <div className="flex items-center mt-1 text-dark/60">
               <div className={`flex items-center ${statusColor.bg} ${statusColor.text} px-2.5 py-1 rounded-full text-xs font-medium`}>
                 <div className={`w-2 h-2 ${statusColor.dot} rounded-full mr-2`}></div>
                 {statusText}
@@ -140,7 +142,7 @@ export const WorkerDetail = () => {
         <div className="flex space-x-3">
           <Link
             to={`/dashboard/workers/edit/${id}`}
-            className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors flex items-center"
+            className="px-4 py-2 bg-secondary-500 hover:bg-secondary-600 text-white rounded-lg transition-colors flex items-center"
           >
             <Edit className="h-4 w-4 mr-2" />
             <span>Modifier</span>
@@ -148,7 +150,7 @@ export const WorkerDetail = () => {
           
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors flex items-center"
+            className="px-4 py-2 bg-primary-500/20 hover:bg-primary-500/30 text-primary-600 rounded-lg transition-colors flex items-center"
           >
             <Trash2 className="h-4 w-4 mr-2" />
             <span>Supprimer</span>
@@ -158,61 +160,61 @@ export const WorkerDetail = () => {
       
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Informations de base */}
-        <div className="xl:col-span-2 bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
+        <div className="xl:col-span-2 bg-white rounded-xl border border-dark/10 overflow-hidden shadow-sm">
           <div className="p-6">
-            <h2 className="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2">
+            <h2 className="text-xl font-bold text-dark mb-6 border-b border-dark/10 pb-2">
               Informations personnelles
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-10">
               <div className="space-y-1">
-                <p className="text-sm text-gray-400">Nom complet</p>
+                <p className="text-sm text-dark/60">Nom complet</p>
                 <div className="flex items-center">
-                  <User className="h-5 w-5 text-primary-400 mr-2" />
-                  <p className="text-white">{worker.firstName} {worker.lastName}</p>
+                  <User className="h-5 w-5 text-primary-500 mr-2" />
+                  <p className="text-dark">{worker.firstName} {worker.lastName}</p>
                 </div>
               </div>
               
               <div className="space-y-1">
-                <p className="text-sm text-gray-400">Email</p>
+                <p className="text-sm text-dark/60">Email</p>
                 <div className="flex items-center">
-                  <Mail className="h-5 w-5 text-primary-400 mr-2" />
-                  <a href={`mailto:${worker.email}`} className="text-white hover:text-primary-400 transition-colors">
+                  <Mail className="h-5 w-5 text-primary-500 mr-2" />
+                  <a href={`mailto:${worker.email}`} className="text-dark hover:text-primary-500 transition-colors">
                     {worker.email}
                   </a>
                 </div>
               </div>
               
               <div className="space-y-1">
-                <p className="text-sm text-gray-400">Téléphone</p>
+                <p className="text-sm text-dark/60">Téléphone</p>
                 <div className="flex items-center">
-                  <Phone className="h-5 w-5 text-primary-400 mr-2" />
-                  <a href={`tel:${worker.phone}`} className="text-white hover:text-primary-400 transition-colors">
+                  <Phone className="h-5 w-5 text-primary-500 mr-2" />
+                  <a href={`tel:${worker.phone}`} className="text-dark hover:text-primary-500 transition-colors">
                     {worker.phone}
                   </a>
                 </div>
               </div>
               
               <div className="space-y-1">
-                <p className="text-sm text-gray-400">Date de naissance</p>
+                <p className="text-sm text-dark/60">Date de naissance</p>
                 <div className="flex items-center">
-                  <Calendar className="h-5 w-5 text-primary-400 mr-2" />
-                  <p className="text-white">{formatDate(worker.birthDate as Date | null)}</p>
+                  <Calendar className="h-5 w-5 text-primary-500 mr-2" />
+                  <p className="text-dark">{formatDate(worker.birthDate as Date | null)}</p>
                 </div>
               </div>
               
               {worker.address && (
                 <div className="space-y-1 md:col-span-2">
-                  <p className="text-sm text-gray-400">Adresse</p>
+                  <p className="text-sm text-dark/60">Adresse</p>
                   <div className="flex items-start">
-                    <MapPin className="h-5 w-5 text-primary-400 mr-2 mt-0.5" />
-                    <p className="text-white">{worker.address}</p>
+                    <MapPin className="h-5 w-5 text-primary-500 mr-2 mt-0.5" />
+                    <p className="text-dark">{worker.address}</p>
                   </div>
                 </div>
               )}
             </div>
             
-            <h2 className="text-xl font-bold text-white mt-10 mb-6 border-b border-gray-700 pb-2">
+            <h2 className="text-xl font-bold text-dark mt-10 mb-6 border-b border-dark/10 pb-2">
               Compétences
             </h2>
             
@@ -221,34 +223,40 @@ export const WorkerDetail = () => {
                 worker.skills.map((skill, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-primary-500/20 text-primary-300 rounded-full text-sm"
+                    className="px-3 py-1.5 bg-secondary-500/20 text-secondary-700 rounded-full text-sm"
                   >
                     {skill}
                   </span>
                 ))
               ) : (
-                <p className="text-gray-400">Aucune compétence spécifiée</p>
+                <p className="text-dark/60">Aucune compétence spécifiée</p>
               )}
             </div>
             
             {worker.cvAnalysis && (
               <>
-                <h2 className="text-xl font-bold text-white mt-10 mb-6 border-b border-gray-700 pb-2">
-                  Analyse du CV
+                <h2 className="text-xl font-bold text-dark mt-10 mb-6 border-b border-dark/10 pb-2">
+                  Analyse du CV par IA
                 </h2>
                 
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-md font-semibold text-white mb-3">Résumé</h3>
-                    <p className="text-gray-300">{worker.cvAnalysis.summary}</p>
+                    <h3 className="text-md font-semibold text-dark mb-3 flex items-center">
+                      <Brain className="h-5 w-5 text-secondary-500 mr-2" />
+                      Résumé
+                    </h3>
+                    <p className="text-dark/80">{worker.cvAnalysis.summary}</p>
                   </div>
                   
                   <div>
-                    <h3 className="text-md font-semibold text-white mb-3">Expérience professionnelle</h3>
-                    <ul className="space-y-2 text-gray-300">
+                    <h3 className="text-md font-semibold text-dark mb-3 flex items-center">
+                      <Briefcase className="h-5 w-5 text-secondary-500 mr-2" />
+                      Expérience professionnelle
+                    </h3>
+                    <ul className="space-y-2 text-dark/80">
                       {worker.cvAnalysis.experience.map((exp, idx) => (
                         <li key={idx} className="flex items-start">
-                          <Briefcase className="h-5 w-5 text-primary-400 mr-2 mt-0.5 flex-shrink-0" />
+                          <Star className="h-5 w-5 text-primary-500 mr-2 mt-0.5 flex-shrink-0" />
                           <span>{exp}</span>
                         </li>
                       ))}
@@ -256,11 +264,14 @@ export const WorkerDetail = () => {
                   </div>
                   
                   <div>
-                    <h3 className="text-md font-semibold text-white mb-3">Formation</h3>
-                    <ul className="space-y-2 text-gray-300">
+                    <h3 className="text-md font-semibold text-dark mb-3 flex items-center">
+                      <FileText className="h-5 w-5 text-secondary-500 mr-2" />
+                      Formation
+                    </h3>
+                    <ul className="space-y-2 text-dark/80">
                       {worker.cvAnalysis.education.map((edu, idx) => (
                         <li key={idx} className="flex items-start">
-                          <FileText className="h-5 w-5 text-primary-400 mr-2 mt-0.5 flex-shrink-0" />
+                          <Star className="h-5 w-5 text-primary-500 mr-2 mt-0.5 flex-shrink-0" />
                           <span>{edu}</span>
                         </li>
                       ))}
@@ -268,12 +279,15 @@ export const WorkerDetail = () => {
                   </div>
                   
                   <div>
-                    <h3 className="text-md font-semibold text-white mb-3">Postes recommandés</h3>
+                    <h3 className="text-md font-semibold text-dark mb-3 flex items-center">
+                      <Brain className="h-5 w-5 text-secondary-500 mr-2" />
+                      Postes recommandés
+                    </h3>
                     <div className="flex flex-wrap gap-2">
                       {worker.cvAnalysis.recommendedJobs.map((job, idx) => (
                         <span
                           key={idx}
-                          className="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 rounded-full text-sm"
+                          className="px-3 py-1.5 bg-primary-500/20 text-primary-700 rounded-full text-sm"
                         >
                           {job}
                         </span>
@@ -289,15 +303,15 @@ export const WorkerDetail = () => {
         {/* Panneau latéral */}
         <div className="space-y-6">
           {/* CV */}
-          <div className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
+          <div className="bg-white rounded-xl border border-dark/10 overflow-hidden shadow-sm">
             <div className="p-6">
-              <h2 className="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2">
+              <h2 className="text-xl font-bold text-dark mb-6 border-b border-dark/10 pb-2">
                 CV
               </h2>
               
               {worker.cvUrl ? (
                 <div>
-                  <div className="rounded-lg overflow-hidden bg-gray-900 mb-4">
+                  <div className="rounded-lg overflow-hidden bg-light mb-4">
                     <iframe 
                       src={worker.cvUrl} 
                       className="w-full h-48 pointer-events-none" 
@@ -310,7 +324,7 @@ export const WorkerDetail = () => {
                       href={worker.cvUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg transition-colors flex items-center justify-center"
+                      className="flex-1 px-4 py-2 bg-secondary-500 hover:bg-secondary-600 text-white rounded-lg transition-colors flex items-center justify-center"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       <span>Voir</span>
@@ -319,7 +333,7 @@ export const WorkerDetail = () => {
                     <a
                       href={worker.cvUrl}
                       download
-                      className="flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors flex items-center justify-center"
+                      className="flex-1 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex items-center justify-center"
                     >
                       <Download className="h-4 w-4 mr-2" />
                       <span>Télécharger</span>
@@ -327,18 +341,18 @@ export const WorkerDetail = () => {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8 px-4 border-2 border-dashed border-gray-700 rounded-lg">
-                  <FileText className="h-10 w-10 text-gray-500 mx-auto mb-2" />
-                  <p className="text-gray-400">Aucun CV disponible</p>
+                <div className="text-center py-8 px-4 border-2 border-dashed border-dark/10 rounded-lg">
+                  <FileText className="h-10 w-10 text-dark/40 mx-auto mb-2" />
+                  <p className="text-dark/60">Aucun CV disponible</p>
                 </div>
               )}
             </div>
           </div>
           
-          {/* Disponibilité / Missions */}
-          <div className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
+          {/* Disponibilité / Entretiens */}
+          <div className="bg-white rounded-xl border border-dark/10 overflow-hidden shadow-sm">
             <div className="p-6">
-              <h2 className="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2">
+              <h2 className="text-xl font-bold text-dark mb-6 border-b border-dark/10 pb-2">
                 Statut actuel
               </h2>
               
@@ -348,17 +362,17 @@ export const WorkerDetail = () => {
               </div>
               
               {worker.status === 'busy' && (
-                <div className="p-4 rounded-lg bg-gray-900/50 border border-gray-700">
+                <div className="p-4 rounded-lg bg-light border border-dark/10">
                   <div className="flex items-start space-x-3">
-                    <div className="bg-amber-500/20 p-2 rounded-lg">
-                      <Briefcase className="h-6 w-6 text-amber-400" />
+                    <div className="bg-primary-500/20 p-2 rounded-lg">
+                      <Calendar className="h-6 w-6 text-primary-500" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-white">Mission actuelle</h3>
-                      <p className="text-sm text-gray-400 mt-1">Électricien - BTP Solutions</p>
-                      <div className="flex items-center mt-2 text-xs text-gray-500">
+                      <h3 className="font-medium text-dark">Entretien programmé</h3>
+                      <p className="text-sm text-dark/60 mt-1">Développeur Full-Stack - Tech Solutions</p>
+                      <div className="flex items-center mt-2 text-xs text-dark/50">
                         <Clock className="h-3.5 w-3.5 mr-1" />
-                        <span>Jusqu'au 15 décembre 2023</span>
+                        <span>15 décembre 2023 à 14h30</span>
                       </div>
                     </div>
                   </div>
@@ -366,28 +380,48 @@ export const WorkerDetail = () => {
               )}
             </div>
           </div>
+
+          {/* Score de matching */}
+          <div className="bg-white rounded-xl border border-dark/10 overflow-hidden shadow-sm">
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-dark mb-6 border-b border-dark/10 pb-2">
+                Matching IA
+              </h2>
+              
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center h-24 w-24 rounded-full bg-primary-500/10 text-primary-600 text-2xl font-bold mb-2">
+                  92%
+                </div>
+                <p className="text-dark/70 text-sm">Score de compatibilité avec le poste</p>
+                <button className="mt-4 px-4 py-2 w-full bg-secondary-500 hover:bg-secondary-600 text-white rounded-lg transition-colors flex items-center justify-center">
+                  <Brain className="h-4 w-4 mr-2" />
+                  <span>Détails du matching</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
       {/* Modal de confirmation de suppression */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-xl shadow-2xl p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold text-white mb-4">Confirmer la suppression</h3>
-            <p className="text-gray-300 mb-6">
-              Êtes-vous sûr de vouloir supprimer l'intérimaire {worker.firstName} {worker.lastName} ? Cette action est irréversible.
+        <div className="fixed inset-0 bg-dark/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold text-dark mb-4">Confirmer la suppression</h3>
+            <p className="text-dark/80 mb-6">
+              Êtes-vous sûr de vouloir supprimer le candidat {worker.firstName} {worker.lastName} ? Cette action est irréversible.
             </p>
             <div className="flex space-x-3 justify-end">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-dark/10 hover:bg-dark/20 text-dark rounded-lg transition-colors"
                 disabled={isDeleting}
               >
                 Annuler
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center"
+                className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors flex items-center"
                 disabled={isDeleting}
               >
                 {isDeleting ? (
