@@ -37,8 +37,24 @@ export interface CandidateMatch {
 }
 
 export interface JobMatch {
-  job: JobOffer;
-  worker: Worker;
+  job: {
+    id: string;
+    title: string;
+    company: {
+      id: string;
+      name: string;
+    };
+    location: string;
+    description: string;
+    postedAt: string;
+    salary: {
+      min: number;
+      max: number;
+      currency: string;
+    };
+    type: string;
+    skills: string[];
+  };
   matchScore: number;
   matchedSkills: string[];
   missingSkills: string[];
@@ -297,172 +313,169 @@ function generateDemoJobs(count: number): Job[] {
 }
 
 /**
- * Trouve les correspondances d'emploi pour un travailleur spécifique
+ * Trouve des correspondances d'emploi pour un intérimaire donné
+ * @param workerId - L'ID de l'intérimaire
+ * @returns Une promesse résolvant vers un tableau de correspondances d'emploi
  */
 export const findJobMatches = async (workerId: string): Promise<JobMatch[]> => {
   try {
-    // Récupérer les informations du travailleur
-    const workerDoc = await db.collection('workers').doc(workerId).get();
-    if (!workerDoc.exists) {
-      throw new Error('Travailleur non trouvé');
+    // Récupérer les informations de l'intérimaire
+    const worker = await getWorkerById(workerId);
+    if (!worker) {
+      throw new Error("Intérimaire non trouvé");
     }
-    
-    const worker = { id: workerDoc.id, ...workerDoc.data() } as Worker;
-    
-    // Récupérer toutes les offres d'emploi actives
-    const jobsSnapshot = await getDocs(query(
-      collection(db, 'jobs'),
-      where('active', '==', true)
-    ));
-    
-    // Simuler des offres d'emploi si la collection est vide
-    let jobs: JobOffer[] = [];
-    
-    if (jobsSnapshot.empty) {
-      // Créer des offres d'emploi simulées
-      jobs = generateMockJobs();
-    } else {
-      jobs = jobsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as JobOffer));
-    }
-    
+
+    // Données de test pour les emplois
+    const jobs = [
+      {
+        id: "job1",
+        title: "Développeur Frontend React",
+        company: {
+          id: "company1",
+          name: "TechSolutions"
+        },
+        location: "Paris",
+        description: "Nous recherchons un développeur frontend pour travailler sur des projets React innovants.",
+        postedAt: new Date().toISOString(),
+        salary: {
+          min: 40000,
+          max: 50000,
+          currency: "EUR"
+        },
+        type: "CDI",
+        skills: ["React", "JavaScript", "TypeScript", "CSS", "HTML"]
+      },
+      {
+        id: "job2",
+        title: "Développeur FullStack JavaScript",
+        company: {
+          id: "company2",
+          name: "WebInnovate"
+        },
+        location: "Lyon",
+        description: "Poste de développeur fullstack avec une forte emphase sur Node.js et React.",
+        postedAt: new Date().toISOString(),
+        salary: {
+          min: 45000,
+          max: 55000,
+          currency: "EUR"
+        },
+        type: "CDD - 12 mois",
+        skills: ["JavaScript", "Node.js", "Express", "React", "MongoDB"]
+      },
+      {
+        id: "job3",
+        title: "Développeur Backend Java",
+        company: {
+          id: "company3",
+          name: "SoftwareEnterprise"
+        },
+        location: "Bordeaux",
+        description: "Développement d'APIs et de services backend avec Java et Spring Boot.",
+        postedAt: new Date().toISOString(),
+        salary: {
+          min: 42000,
+          max: 52000,
+          currency: "EUR"
+        },
+        type: "CDI",
+        skills: ["Java", "Spring Boot", "JPA", "SQL", "REST API"]
+      },
+      {
+        id: "job4",
+        title: "Développeur PHP Symfony",
+        company: {
+          id: "company4",
+          name: "AgenceDigitale"
+        },
+        location: "Marseille",
+        description: "Développement d'applications web avec PHP et Symfony.",
+        postedAt: new Date().toISOString(),
+        salary: {
+          min: 35000,
+          max: 45000,
+          currency: "EUR"
+        },
+        type: "CDI",
+        skills: ["PHP", "Symfony", "MySQL", "JavaScript", "HTML", "CSS"]
+      },
+      {
+        id: "job5",
+        title: "Intégrateur Web",
+        company: {
+          id: "company5",
+          name: "DesignAgency"
+        },
+        location: "Lille",
+        description: "Intégration de maquettes et développement frontend.",
+        postedAt: new Date().toISOString(),
+        salary: {
+          min: 30000,
+          max: 38000,
+          currency: "EUR"
+        },
+        type: "Freelance",
+        skills: ["HTML", "CSS", "JavaScript", "Responsive Design", "SASS"]
+      },
+      {
+        id: "job6",
+        title: "Développeur .NET",
+        company: {
+          id: "company6",
+          name: "EnterpriseSoft"
+        },
+        location: "Nantes",
+        description: "Développement d'applications d'entreprise avec .NET Core.",
+        postedAt: new Date().toISOString(),
+        salary: {
+          min: 40000,
+          max: 50000,
+          currency: "EUR"
+        },
+        type: "CDI",
+        skills: ["C#", ".NET Core", "SQL Server", "Azure", "REST API"]
+      }
+    ];
+
     // Calculer les correspondances
-    const matches: JobMatch[] = calculateJobMatches(worker, jobs);
-    
+    const matches: JobMatch[] = jobs.map(job => {
+      const workerSkills = worker.skills;
+      const jobSkills = job.skills;
+      
+      // Compétences correspondantes et manquantes
+      const matchedSkills = workerSkills.filter(skill => 
+        jobSkills.some(jobSkill => jobSkill.toLowerCase() === skill.toLowerCase())
+      );
+      
+      const missingSkills = jobSkills.filter(skill => 
+        !workerSkills.some(workerSkill => workerSkill.toLowerCase() === skill.toLowerCase())
+      );
+      
+      // Calculer le score de correspondance
+      // 70% basé sur le pourcentage de compétences requises possédées par l'intérimaire
+      // 30% basé sur le pourcentage de compétences de l'intérimaire utilisées dans ce poste
+      const skillsMatchPercentage = jobSkills.length > 0 
+        ? (matchedSkills.length / jobSkills.length) * 100 
+        : 0;
+        
+      const skillsUtilizationPercentage = workerSkills.length > 0 
+        ? (matchedSkills.length / workerSkills.length) * 100 
+        : 0;
+        
+      const matchScore = Math.round((skillsMatchPercentage * 0.7) + (skillsUtilizationPercentage * 0.3));
+      
+      return {
+        job,
+        matchScore,
+        matchedSkills,
+        missingSkills
+      };
+    });
+
     // Trier par score de correspondance (décroissant)
     return matches.sort((a, b) => b.matchScore - a.matchScore);
   } catch (error) {
-    console.error('Erreur lors de la recherche de correspondances:', error);
+    console.error("Erreur lors de la recherche des correspondances d'emploi:", error);
     throw error;
   }
-};
-
-/**
- * Calcule les correspondances entre un travailleur et une liste d'offres d'emploi
- */
-const calculateJobMatches = (worker: Worker, jobs: JobOffer[]): JobMatch[] => {
-  const workerSkills = worker.skills || [];
-  
-  return jobs.map(job => {
-    const jobSkills = job.requiredSkills || [];
-    
-    // Identifier les compétences correspondantes
-    const matchedSkills = workerSkills.filter(skill => 
-      jobSkills.some(jobSkill => 
-        jobSkill.toLowerCase() === skill.toLowerCase()
-      )
-    );
-    
-    // Identifier les compétences manquantes
-    const missingSkills = jobSkills.filter(skill => 
-      !workerSkills.some(workerSkill => 
-        workerSkill.toLowerCase() === skill.toLowerCase()
-      )
-    );
-    
-    // Calculer le score de correspondance (pourcentage de compétences requises que possède le travailleur)
-    const matchScore = jobSkills.length > 0 
-      ? Math.round((matchedSkills.length / jobSkills.length) * 100) 
-      : 0;
-    
-    return {
-      job,
-      worker,
-      matchScore,
-      matchedSkills,
-      missingSkills
-    };
-  });
-};
-
-/**
- * Génère des offres d'emploi fictives pour la démonstration
- */
-const generateMockJobs = (): JobOffer[] => {
-  return [
-    {
-      id: '1',
-      title: 'Soudeur TIG/MIG',
-      company: { 
-        id: 'comp1', 
-        name: 'Métallerie Dupont', 
-        logoUrl: 'https://randomuser.me/api/portraits/men/1.jpg' 
-      },
-      location: 'Lyon, France',
-      description: 'Nous recherchons un soudeur expérimenté pour des travaux de précision.',
-      requiredSkills: ['Soudure TIG', 'Soudure MIG', 'Lecture de plans'],
-      salary: { min: 2800, max: 3500 },
-      type: 'Intérim',
-      duration: '3 mois',
-      postedAt: Date.now() - 86400000 * 5, // 5 jours avant
-      active: true
-    },
-    {
-      id: '2',
-      title: 'Développeur Full Stack',
-      company: { 
-        id: 'comp2', 
-        name: 'Tech Solutions', 
-        logoUrl: 'https://randomuser.me/api/portraits/women/2.jpg' 
-      },
-      location: 'Paris, France',
-      description: 'Développement d\'applications web modernes utilisant React et Node.js.',
-      requiredSkills: ['JavaScript', 'React', 'Node.js', 'SQL'],
-      salary: { min: 3800, max: 4500 },
-      type: 'Intérim',
-      duration: '6 mois',
-      postedAt: Date.now() - 86400000 * 2, // 2 jours avant
-      active: true
-    },
-    {
-      id: '3',
-      title: 'Assistant(e) Administratif(ve)',
-      company: { 
-        id: 'comp3', 
-        name: 'Bureau & Co', 
-        logoUrl: 'https://randomuser.me/api/portraits/women/3.jpg' 
-      },
-      location: 'Marseille, France',
-      description: 'Gestion administrative et support à l\'équipe de direction.',
-      requiredSkills: ['Pack Office', 'Organisation', 'Communication'],
-      salary: { min: 2200, max: 2600 },
-      type: 'Intérim',
-      duration: '1 mois',
-      postedAt: Date.now() - 86400000 * 10, // 10 jours avant
-      active: true
-    },
-    {
-      id: '4',
-      title: 'Infirmier(e) Diplômé(e)',
-      company: { 
-        id: 'comp4', 
-        name: 'Clinique Saint-Martin', 
-        logoUrl: 'https://randomuser.me/api/portraits/men/4.jpg' 
-      },
-      location: 'Nantes, France',
-      description: 'Soins aux patients dans un service de médecine générale.',
-      requiredSkills: ['Soins infirmiers', 'Gestion médicale', 'Empathie'],
-      salary: { min: 2600, max: 3200 },
-      type: 'Intérim',
-      duration: '2 mois',
-      postedAt: Date.now() - 86400000 * 1, // 1 jour avant
-      active: true
-    },
-    {
-      id: '5',
-      title: 'Manutentionnaire',
-      company: { 
-        id: 'comp5', 
-        name: 'Logistique Express', 
-        logoUrl: 'https://randomuser.me/api/portraits/men/5.jpg' 
-      },
-      location: 'Lille, France',
-      description: 'Chargement, déchargement et tri de marchandises.',
-      requiredSkills: ['Port de charges', 'CACES 1', 'Travail d\'équipe'],
-      salary: { min: 1800, max: 2200 },
-      type: 'Intérim',
-      duration: '2 semaines',
-      postedAt: Date.now() - 86400000 * 3, // 3 jours avant
-      active: true
-    }
-  ];
 }; 

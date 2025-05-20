@@ -7,15 +7,18 @@ import { ForgotPasswordForm } from './components/auth/ForgotPasswordForm';
 import { Dashboard } from './pages/Dashboard';
 import { DashboardLayout } from './components/dashboard/DashboardLayout';
 import { AIChat } from './components/ai/AIChat';
-import { WorkersList } from './components/workers/WorkersList';
+import { CandidatesList } from './components/candidates/CandidatesList';
 import { Reports } from './pages/dashboard/Reports';
 import { Settings } from './pages/dashboard/Settings';
 import { Landing } from './pages/Landing';
 import { Documents } from './pages/dashboard/Documents';
 import { SeedData } from './pages/dashboard/SeedData';
-import { WorkerDetail } from './pages/dashboard/WorkerDetail';
+import { CandidateDetail } from './pages/dashboard/CandidateDetail';
 import Matching from './pages/dashboard/Matching';
 import Missions from './pages/dashboard/Missions';
+import { CandidateValue } from './pages/dashboard/CandidateValue';
+import { CandidateInterview } from './pages/dashboard/CandidateInterview';
+import { AICandidateSearch } from './components/ai/AICandidateSearch';
 
 function App() {
   const { user } = useAuthStore();
@@ -33,8 +36,11 @@ function App() {
           element={!user ? <Navigate to="/login" /> : <DashboardLayout />}
         >
           <Route index element={<Dashboard />} />
-          <Route path="workers" element={<WorkersList />} />
-          <Route path="workers/:id" element={<WorkerDetail />} />
+          <Route path="candidates" element={<CandidatesList />} />
+          <Route path="candidates/:id" element={<CandidateDetail />} />
+          <Route path="candidates/:id/value" element={<CandidateValue />} />
+          <Route path="candidates/:id/interview" element={<CandidateInterview />} />
+          <Route path="search" element={<AICandidateSearch onCandidatesFound={() => {}} />} />
           <Route path="missions" element={<Missions />} />
           <Route path="documents" element={<Documents />} />
           <Route path="reports" element={<Reports />} />
