@@ -80,7 +80,7 @@ exports.handler = async (event, context) => {
     if (type === 'reminder') {
       // Email de rappel
       emailData = {
-        from: 'OYA Intelligence <onboarding@resend.dev>',
+        from: 'OYA Intelligence <oya@instantmov.fr>',
         to: [candidateEmail],
         subject: `Rappel - Entretien demain à ${interviewTime}`,
         html: `
@@ -101,7 +101,7 @@ exports.handler = async (event, context) => {
     } else {
       // Email d'invitation
       emailData = {
-        from: 'OYA Intelligence <onboarding@resend.dev>',
+        from: 'OYA Intelligence <oya@instantmov.fr>',
         to: [candidateEmail],
         subject: `Invitation entretien - ${position} chez ${companyName}`,
         html: `
