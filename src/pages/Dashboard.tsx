@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
-import Sidebar from '../components/Dashboard/Sidebar';
+import Sidebar from '../components/Dashboard/Sidebar.tsx';
 import DashboardOverview from '../components/Dashboard/DashboardOverview';
 import CandidatesList from '../components/Dashboard/CandidatesList';
 import CandidateForm from '../components/Dashboard/CandidateForm';
