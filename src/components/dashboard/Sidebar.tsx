@@ -1,171 +1,125 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import {
+import { 
+  Users, 
+  TrendingUp, 
+  Star, 
+  Settings, 
+  LogOut, 
   Home,
-  Users,
+  Search,
+  Calendar,
+  BarChart3,
   Briefcase,
-  FileText,
-  MessageSquare,
-  BarChart,
-  Settings,
-  ChevronRight,
-  LogOut,
-  ChevronLeft,
-  Menu,
-  Link as LinkIcon
+  Video,
+  Zap
 } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
-import { Logo } from './Logo';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
-  isOpen: boolean;
-  toggleSidebar: () => void;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
-  const { signOut } = useAuthStore();
+const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
+  const { logout, currentUser } = useAuth();
 
-  const navItems = [
-    { icon: Home, label: 'Accueil', path: '/dashboard' },
-    { icon: Users, label: 'Candidats', path: '/dashboard/candidates' },
-    { icon: Briefcase, label: 'Offres', path: '/dashboard/missions' },
-    { icon: FileText, label: 'Documents', path: '/dashboard/documents' },
-    { icon: LinkIcon, label: 'Matching IA', path: '/dashboard/matching' },
-    { icon: MessageSquare, label: 'Assistant IA', path: '/dashboard/ai-chat' },
-    { icon: BarChart, label: 'Rapports', path: '/dashboard/reports' },
-    { icon: Settings, label: 'Paramètres', path: '/dashboard/settings' }
+  const menuItems = [
+    { id: 'dashboard', label: 'Tableau de bord', icon: Home },
+    { id: 'candidates', label: 'Candidats', icon: Users },
+    { id: 'sourcing', label: 'Sourcing IA', icon: Search },
+    { id: 'pipeline', label: 'Pipeline', icon: TrendingUp },
+    { id: 'jobs', label: 'Offres d\'emploi', icon: Briefcase },
+    { id: 'interviews', label: 'Studio entretiens', icon: Video },
+    { id: 'automation', label: 'Automatisation', icon: Zap },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'calendar', label: 'Agenda', icon: Calendar },
   ];
 
-  // Groupes de navigation
-  const navGroups = [
-    {
-      id: 'main',
-      label: 'Principal',
-      items: navItems.slice(0, 3) // Accueil, Candidats, Offres
-    },
-    {
-      id: 'management',
-      label: 'Gestion',
-      items: navItems.slice(3, 6) // Documents, Matching IA, Assistant IA
-    },
-    {
-      id: 'analytics',
-      label: 'Analyses',
-      items: navItems.slice(6) // Rapports, Paramètres
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
     }
-  ];
+  };
 
   return (
-    <aside 
-      className={`h-full z-30 transition-all duration-300 ease-in-out ${
-        isOpen ? 'w-72' : 'w-20 overflow-hidden'
-      }`}
-      style={{
-        background: '#f4f0ec',
-        boxShadow: '0 0 20px rgba(0, 0, 0, 0.1), inset 1px 0 0 rgba(0, 0, 0, 0.05)'
-      }}
-    >
-      {/* Menu mobile trigger */}
-      <div className="md:hidden fixed bottom-6 right-6 z-50">
-        <button
-          className="p-3 rounded-full bg-orange text-ivoire shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-110"
-          onClick={toggleSidebar}
-        >
-          <Menu className="h-6 w-6" />
-        </button>
-      </div>
-      
-      {/* Logo et bouton de toggle */}
-      <div className="p-5 flex items-center justify-between border-b border-gray-200 h-16">
-        <div className={`transition-all duration-300 ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10 hidden'}`}>
-          <Logo size="sm" variant="dark" />
-        </div>
-        <div className={`transition-all duration-300 ${!isOpen ? 'opacity-100 scale-100 block' : 'opacity-0 scale-95 hidden'} mx-auto`}>
-          <div className="relative h-10 w-10 rounded-full flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 opacity-70 blur-[2px]"></div>
-            <div className="relative h-9 w-9 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold text-lg">
-              O
-            </div>
+    <div className="fixed left-0 top-0 w-64 h-full bg-[#223049] text-white z-50 flex flex-col">
+      {/* Logo */}
+      <div className="p-6 border-b border-white/10">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#ff6a3d] to-[#9b6bff] rounded-full flex items-center justify-center">
+            <div className="w-3 h-3 bg-white rounded-full"></div>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold">oya</h1>
+            <p className="text-sm opacity-75">intelligence</p>
           </div>
         </div>
-        <button 
-          onClick={toggleSidebar}
-          className="p-2 rounded-full text-gray-500 hover:text-gray-800 transition-colors duration-200 hover:bg-gray-200/50"
-        >
-          {isOpen ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-6 px-3 overflow-y-auto h-[calc(100vh-8rem)]">
-        {navGroups.map((group) => (
-          <div key={group.id} className="mb-8">
-            {isOpen && (
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-3">
-                {group.label}
-              </h3>
-            )}
-            <div className="space-y-1.5">
-              {group.items.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center ${isOpen ? 'px-3' : 'px-0 justify-center'} py-2.5 text-sm rounded-lg transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-violet/10 text-violet' 
-                        : 'text-bleu hover:bg-bleu/10 hover:text-orange'
-                    }`
-                  }
-                  title={!isOpen ? item.label : undefined}
-                >
-                  {({ isActive }) => (
-                    <>
-                      <div className={`relative ${!isOpen ? 'p-2' : ''}`}>
-                        <item.icon className={`h-5 w-5 ${isOpen ? 'mr-3' : ''} ${
-                          isActive 
-                            ? 'text-violet' 
-                            : 'text-bleu'
-                          } transition-colors duration-200`} 
-                        />
-                        {isActive && !isOpen && (
-                          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-violet rounded-l-md"></div>
-                        )}
-                      </div>
-                      {isOpen && (
-                        <>
-                          <span className="flex-1 truncate">{item.label}</span>
-                          {isActive && <div className="w-1.5 h-1.5 rounded-full bg-violet ml-2"></div>}
-                        </>
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        ))}
+      <nav className="flex-1 p-4">
+        <div className="space-y-2">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === item.id 
+                  ? 'bg-[#ff6a3d] text-white' 
+                  : 'hover:bg-white/10 text-gray-300 hover:text-white'
+              }`}
+            >
+              <item.icon size={20} />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-bleu/10 h-16">
-        <button
-          onClick={() => signOut()}
-          className={`flex items-center ${isOpen ? 'w-full px-3' : 'mx-auto p-2'} py-2 text-sm rounded-md transition-all duration-200 text-bleu hover:text-orange hover:bg-bleu/10 group`}
-          title={!isOpen ? 'Déconnexion' : undefined}
-        >
-          <LogOut className="h-5 w-5 group-hover:text-orange transition-colors duration-200" />
-          {isOpen && <span className="ml-3">Déconnexion</span>}
-        </button>
+      {/* User section */}
+      <div className="p-4 border-t border-white/10">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-10 h-10 bg-[#ff6a3d] rounded-full flex items-center justify-center">
+            <span className="text-white font-semibold">
+              {currentUser?.displayName?.charAt(0) || currentUser?.email?.charAt(0) || 'U'}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-white truncate">
+              {currentUser?.displayName || 'Utilisateur'}
+            </p>
+            <p className="text-xs text-gray-300 truncate">
+              {currentUser?.email}
+            </p>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors ${
+              activeTab === 'settings' 
+                ? 'bg-[#ff6a3d] text-white' 
+                : 'hover:bg-white/10 text-gray-300 hover:text-white'
+            }`}
+          >
+            <Settings size={16} />
+            <span className="text-sm">Paramètres</span>
+          </button>
+          
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-colors hover:bg-red-500/20 text-gray-300 hover:text-red-300"
+          >
+            <LogOut size={16} />
+            <span className="text-sm">Déconnexion</span>
+          </button>
+        </div>
       </div>
-      
-      {/* Overlay pour fermer sur mobile */}
-      {isOpen && (
-        <div 
-          className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-20"
-          onClick={toggleSidebar}
-        />
-      )}
-    </aside>
+    </div>
   );
 };
+
+export default Sidebar;

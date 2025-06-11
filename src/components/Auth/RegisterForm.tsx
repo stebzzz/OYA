@@ -1,32 +1,37 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
 
-interface LoginFormProps {
+interface RegisterFormProps {
   onToggleMode: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (password.length < 6) {
+      return setError('Le mot de passe doit contenir au moins 6 caractères');
+    }
+
     try {
       setError('');
       setLoading(true);
-      await login(email, password);
-      // Redirection vers le dashboard après connexion réussie
+      await register(email, password, displayName);
+      // Redirection vers le dashboard après inscription réussie
       navigate('/dashboard');
     } catch (error) {
-      setError('Échec de la connexion. Vérifiez vos identifiants.');
+      setError('Impossible de créer le compte');
     } finally {
       setLoading(false);
     }
@@ -45,8 +50,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
               <p className="text-sm text-gray-600 -mt-1">intelligence</p>
             </div>
           </div>
-          <h2 className="text-xl font-semibold text-[#223049] mb-2">Connexion</h2>
-          <p className="text-gray-600">Accédez à votre plateforme IA RH</p>
+          <h2 className="text-xl font-semibold text-[#223049] mb-2">Créer un compte</h2>
+          <p className="text-gray-600">Rejoignez la révolution IA RH</p>
         </div>
 
         {error && (
@@ -56,6 +61,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nom complet
+            </label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                placeholder="Votre nom complet"
+                required
+              />
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Email
@@ -95,6 +117,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+            <p className="text-xs text-gray-500 mt-1">Minimum 6 caractères</p>
           </div>
 
           <button
@@ -102,31 +125,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             disabled={loading}
             className="w-full bg-[#ff6a3d] text-white py-3 px-4 rounded-lg hover:bg-[#ff6a3d]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
           >
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? 'Création...' : 'Créer mon compte'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Pas encore de compte ?{' '}
+            Déjà un compte ?{' '}
             <button
               onClick={onToggleMode}
               className="text-[#ff6a3d] hover:text-[#ff6a3d]/80 font-medium"
             >
-              Créer un compte
+              Se connecter
             </button>
           </p>
-        </div>
-
-        {/* Demo credentials */}
-        <div className="mt-6 p-4 bg-[#f4f0ec] rounded-lg">
-          <p className="text-sm text-gray-600 mb-2 font-medium">Compte de démonstration :</p>
-          <p className="text-xs text-gray-500">Email: demo@oya-intelligence.com</p>
-          <p className="text-xs text-gray-500">Mot de passe: demo123</p>
         </div>
       </div>
     </div>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
