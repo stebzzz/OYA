@@ -43,9 +43,33 @@ const InterviewJoin: React.FC = () => {
 
   useEffect(() => {
     if (linkValid && candidateInfo.name) {
+      checkMediaDevices();
       initializeMedia();
     }
   }, [linkValid, candidateInfo]);
+
+  const checkMediaDevices = async () => {
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        const audioDevices = devices.filter(device => device.kind === 'audioinput');
+        
+        console.log('📹 Caméras disponibles:', videoDevices.length);
+        console.log('🎤 Microphones disponibles:', audioDevices.length);
+        console.log('🔍 Appareils détectés:', devices);
+        
+        if (videoDevices.length === 0 && videoEnabled) {
+          console.warn('⚠️ Aucune caméra détectée');
+        }
+        if (audioDevices.length === 0 && audioEnabled) {
+          console.warn('⚠️ Aucun microphone détecté');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur énumération appareils:', error);
+    }
+  };
 
   const validateInvitationLink = () => {
     if (!token) {
@@ -75,6 +99,13 @@ const InterviewJoin: React.FC = () => {
 
   const initializeMedia = async () => {
     try {
+      console.log('🎥 Initialisation des médias...');
+      
+      // Vérifier si les API sont disponibles
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Les API de média ne sont pas supportées par ce navigateur');
+      }
+      
       const constraints = {
         video: videoEnabled ? {
           width: { ideal: 1280 },
@@ -87,19 +118,38 @@ const InterviewJoin: React.FC = () => {
         } : false
       };
 
+      console.log('📋 Contraintes média:', constraints);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('✅ Stream obtenu:', stream);
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        await videoRef.current.play();
+        try {
+          await videoRef.current.play();
+          console.log('▶️ Lecture vidéo démarrée');
+        } catch (playError) {
+          console.warn('Avertissement lecture vidéo:', playError);
+          // La lecture peut échouer mais le stream reste valide
+        }
       }
       
       streamRef.current = stream;
       setMediaReady(true);
+      console.log('✅ Médias initialisés avec succès');
       
     } catch (error) {
-      console.error('Erreur accès média:', error);
-      setErrorMessage('Impossible d\'accéder à la caméra ou au microphone. Vérifiez les permissions de votre navigateur.');
+      console.error('❌ Erreur accès média:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      
+      if (errorMessage.includes('not found') || errorMessage.includes('NotFoundError')) {
+        setErrorMessage('Aucune caméra ou microphone détecté. Vérifiez que vos appareils sont connectés.');
+      } else if (errorMessage.includes('denied') || errorMessage.includes('NotAllowedError')) {
+        setErrorMessage('Accès refusé. Veuillez autoriser l\'accès à la caméra et au microphone dans votre navigateur.');
+      } else if (errorMessage.includes('not supported')) {
+        setErrorMessage('Votre navigateur ne supporte pas l\'accès aux médias. Utilisez un navigateur moderne.');
+      } else {
+        setErrorMessage(`Erreur d'accès aux médias: ${errorMessage}`);
+      }
     }
   };
 
@@ -149,6 +199,26 @@ const InterviewJoin: React.FC = () => {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
     navigate('/');
+  };
+
+  const testMedia = async () => {
+    console.log('🧪 Test manuel des médias...');
+    await checkMediaDevices();
+    await initializeMedia();
+  };
+
+  const stopMedia = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    
+    setMediaReady(false);
+    console.log('🛑 Médias arrêtés');
   };
 
   if (linkValid === false) {
@@ -350,13 +420,44 @@ const InterviewJoin: React.FC = () => {
                 
                 <div className="flex items-center space-x-3">
                   {mediaReady ? (
-                    <CheckCircle className="text-green-500\" size={16} />
+                    <CheckCircle className="text-green-500" size={16} />
                   ) : (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#ff6a3d]"></div>
+                    <AlertCircle className="text-yellow-500" size={16} />
                   )}
                   <span className="text-sm text-gray-700">
-                    {mediaReady ? 'Média prêt' : 'Configuration média...'}
+                    {mediaReady ? 'Caméra et microphone prêts' : 'Configuration des médias en cours...'}
                   </span>
+                </div>
+                
+                {/* Boutons de test */}
+                <div className="pt-3 border-t border-gray-100">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={testMedia}
+                      className="flex-1 px-3 py-2 text-xs bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      🧪 Tester les médias
+                    </button>
+                    <button
+                      onClick={stopMedia}
+                      className="flex-1 px-3 py-2 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                    >
+                      🛑 Arrêter
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => {
+                      console.log('📊 État actuel:');
+                      console.log('- mediaReady:', mediaReady);
+                      console.log('- videoEnabled:', videoEnabled);
+                      console.log('- audioEnabled:', audioEnabled);
+                      console.log('- streamRef.current:', streamRef.current);
+                      console.log('- videoRef.current:', videoRef.current);
+                    }}
+                    className="w-full mt-2 px-3 py-2 text-xs bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    📊 Diagnostic console
+                  </button>
                 </div>
               </div>
             </div>

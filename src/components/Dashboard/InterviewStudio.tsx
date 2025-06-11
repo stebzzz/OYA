@@ -93,9 +93,43 @@ const InterviewStudio: React.FC = () => {
     return () => clearInterval(interval);
   }, [isRecording, isPaused]);
 
+  const checkMediaDevices = async () => {
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        const audioDevices = devices.filter(device => device.kind === 'audioinput');
+        
+        console.log('📹 Caméras disponibles:', videoDevices.length);
+        console.log('🎤 Microphones disponibles:', audioDevices.length);
+        console.log('🔍 Appareils détectés:', devices);
+        
+        if (videoDevices.length === 0 && videoEnabled) {
+          console.warn('⚠️ Aucune caméra détectée');
+          setStreamError('Aucune caméra détectée. Vérifiez qu\'une caméra est connectée.');
+        }
+        if (audioDevices.length === 0 && audioEnabled) {
+          console.warn('⚠️ Aucun microphone détecté');
+          setStreamError('Aucun microphone détecté. Vérifiez qu\'un microphone est connecté.');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur énumération appareils:', error);
+    }
+  };
+
   const startVideoStream = async () => {
     try {
       setStreamError(null);
+      console.log('🎥 Démarrage du stream vidéo...');
+      
+      // Vérifier si les API sont disponibles
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Les API de média ne sont pas supportées par ce navigateur');
+      }
+      
+      // Vérifier les appareils disponibles
+      await checkMediaDevices();
       
       const constraints = {
         video: videoEnabled ? {
@@ -109,24 +143,34 @@ const InterviewStudio: React.FC = () => {
         } : false
       };
 
+      console.log('📋 Contraintes média:', constraints);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('✅ Stream obtenu:', stream);
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        await videoRef.current.play();
+        try {
+          await videoRef.current.play();
+          console.log('▶️ Lecture vidéo démarrée');
+        } catch (playError) {
+          console.warn('Avertissement lecture vidéo:', playError);
+          // La lecture peut échouer mais le stream reste valide
+        }
       }
       
       streamRef.current = stream;
       console.log('✅ Accès caméra/micro réussi');
       
     } catch (error) {
-      console.error('Erreur accès caméra/micro:', error);
+      console.error('❌ Erreur accès caméra/micro:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       
       if (errorMessage.includes('not found') || errorMessage.includes('NotFoundError')) {
         setStreamError('Aucune caméra ou microphone détecté. Vérifiez que vos appareils sont connectés.');
       } else if (errorMessage.includes('denied') || errorMessage.includes('NotAllowedError')) {
         setStreamError('Accès refusé. Veuillez autoriser l\'accès à la caméra et au microphone dans votre navigateur.');
+      } else if (errorMessage.includes('not supported')) {
+        setStreamError('Votre navigateur ne supporte pas l\'accès aux médias. Utilisez un navigateur moderne.');
       } else {
         setStreamError(`Erreur d'accès aux médias: ${errorMessage}`);
       }
