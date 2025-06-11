@@ -6,6 +6,7 @@ import {
   Mic, 
   MicOff, 
   Phone, 
+  Camera,
   Settings,
   AlertCircle,
   CheckCircle,
