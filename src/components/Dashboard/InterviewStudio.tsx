@@ -31,6 +31,7 @@ import {
 import { useCandidates } from '../../hooks/useCandidates';
 import { EmailService } from '../../services/emailService';
 import { InterviewLinkService } from '../../services/interviewLinkService';
+import { interviewAIService, InterviewAnalysis, TranscriptionSegment } from '../../services/interviewAIService';
 
 interface InterviewSession {
   id: string;
@@ -47,17 +48,7 @@ interface InterviewSession {
   status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
   invitationSent?: boolean;
   invitationLink?: string;
-  aiAnalysis?: {
-    overallScore: number;
-    communication: number;
-    technicalSkills: number;
-    motivation: number;
-    culturalFit: number;
-    keyInsights: string[];
-    recommendations: string[];
-    transcription: string;
-    emotions: { timestamp: number; emotion: string; confidence: number }[];
-  };
+  aiAnalysis?: InterviewAnalysis;
 }
 
 const InterviewStudio: React.FC = () => {
@@ -78,6 +69,11 @@ const InterviewStudio: React.FC = () => {
   const [showSessionForm, setShowSessionForm] = useState(false);
   const [streamError, setStreamError] = useState<string | null>(null);
   const [sendingInvitation, setSendingInvitation] = useState<string | null>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [transcriptionSegments, setTranscriptionSegments] = useState<TranscriptionSegment[]>([]);
+  const [currentSpeaker, setCurrentSpeaker] = useState<'interviewer' | 'candidate'>('candidate');
+  const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
+  const [liveTranscription, setLiveTranscription] = useState('');
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -204,11 +200,16 @@ const InterviewStudio: React.FC = () => {
         setIsRecording(true);
         setRecordingTime(0);
         
+        // Démarrer la transcription automatiquement
+        startTranscription();
+        
         if (currentSession) {
           const updatedSession = { ...currentSession, status: 'in_progress' as const };
           setSessions(prev => prev.map(s => s.id === currentSession.id ? updatedSession : s));
           setCurrentSession(updatedSession);
         }
+        
+        console.log('🔴 Enregistrement et transcription démarrés');
       } catch (error) {
         console.error('Erreur démarrage enregistrement:', error);
         alert('Impossible de démarrer l\'enregistrement');
@@ -236,50 +237,79 @@ const InterviewStudio: React.FC = () => {
       setIsRecording(false);
       setIsPaused(false);
       
+      // Arrêter la transcription
+      stopTranscription();
+      
       if (currentSession) {
-        const aiAnalysis = await simulateAIAnalysis();
-        const updatedSession = {
-          ...currentSession,
-          status: 'completed' as const,
-          aiAnalysis
-        };
+        // Lancer l'analyse IA avec les vraies données
+        const analysis = await performAIAnalysis();
         
-        setSessions(prev => prev.map(s => s.id === currentSession.id ? updatedSession : s));
-        setCurrentSession(updatedSession);
-        setShowAIAnalysis(true);
+        if (analysis) {
+          const updatedSession = {
+            ...currentSession,
+            status: 'completed' as const,
+            aiAnalysis: analysis
+          };
+          
+          setSessions(prev => prev.map(s => s.id === currentSession.id ? updatedSession : s));
+          setCurrentSession(updatedSession);
+          setShowAIAnalysis(true);
+        }
       }
+      
+      console.log('⏹️ Enregistrement et transcription arrêtés');
     }
     
     stopVideoStream();
   };
 
-  const simulateAIAnalysis = async (): Promise<InterviewSession['aiAnalysis']> => {
-    await new Promise(resolve => setTimeout(resolve, 2000));
+  const startTranscription = () => {
+    try {
+      interviewAIService.startTranscription((segment) => {
+        setTranscriptionSegments(prev => [...prev, segment]);
+        setLiveTranscription(segment.text);
+        setTimeout(() => setLiveTranscription(''), 3000);
+      });
+      setIsTranscribing(true);
+      console.log('🎤 Transcription démarrée');
+    } catch (error) {
+      console.error('Erreur démarrage transcription:', error);
+      alert('Erreur: ' + error.message);
+    }
+  };
+
+  const stopTranscription = () => {
+    interviewAIService.stopTranscription();
+    setIsTranscribing(false);
+    setLiveTranscription('');
+    console.log('🛑 Transcription arrêtée');
+  };
+
+  const switchSpeaker = (speaker: 'interviewer' | 'candidate') => {
+    setCurrentSpeaker(speaker);
+    interviewAIService.setSpeaker(speaker);
+  };
+
+  const performAIAnalysis = async (): Promise<InterviewAnalysis | undefined> => {
+    if (!currentSession) return;
     
-    return {
-      overallScore: 75 + Math.floor(Math.random() * 20),
-      communication: 70 + Math.floor(Math.random() * 25),
-      technicalSkills: 65 + Math.floor(Math.random() * 30),
-      motivation: 80 + Math.floor(Math.random() * 20),
-      culturalFit: 75 + Math.floor(Math.random() * 20),
-      keyInsights: [
-        'Communication claire et structurée',
-        'Bonne maîtrise technique du domaine',
-        'Motivation authentique pour le poste',
-        'Bon alignement culturel avec l\'entreprise'
-      ],
-      recommendations: [
-        'Candidat recommandé pour la suite du processus',
-        'Approfondir l\'évaluation technique',
-        'Organiser une rencontre avec l\'équipe'
-      ],
-      transcription: 'Transcription automatique de l\'entretien sera disponible ici...',
-      emotions: [
-        { timestamp: 60, emotion: 'Confiant', confidence: 0.8 },
-        { timestamp: 180, emotion: 'Concentré', confidence: 0.85 },
-        { timestamp: 300, emotion: 'Enthousiaste', confidence: 0.75 }
-      ]
-    };
+    setAiAnalysisLoading(true);
+    try {
+      const analysis = await interviewAIService.analyzeInterview({
+        candidateName: currentSession.candidateName,
+        position: currentSession.position,
+        transcriptionSegments: transcriptionSegments,
+        duration: Math.floor(recordingTime / 60)
+      });
+      
+      console.log('✅ Analyse IA terminée:', analysis);
+      return analysis;
+    } catch (error) {
+      console.error('Erreur analyse IA:', error);
+      alert('Erreur lors de l\'analyse IA: ' + error.message);
+    } finally {
+      setAiAnalysisLoading(false);
+    }
   };
 
   const toggleVideo = () => {
@@ -503,6 +533,18 @@ const InterviewStudio: React.FC = () => {
                         </div>
 
                         <div className="flex items-center space-x-2">
+                          {/* Bouton d'accès direct à la réunion */}
+                          {session.status === 'scheduled' && (
+                            <button
+                              onClick={() => startSession(session)}
+                              className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center space-x-2"
+                              title="Accéder directement à la réunion"
+                            >
+                              <Video size={16} />
+                              <span>Accéder à la réunion</span>
+                            </button>
+                          )}
+
                           {session.status === 'scheduled' && !session.invitationSent && (
                             <button
                               onClick={() => sendInvitation(session)}
@@ -538,16 +580,6 @@ const InterviewStudio: React.FC = () => {
                             >
                               <ExternalLink size={14} />
                             </a>
-                          )}
-
-                          {session.status === 'scheduled' && session.invitationSent && (
-                            <button
-                              onClick={() => startSession(session)}
-                              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
-                            >
-                              <Play size={16} />
-                              <span>Démarrer</span>
-                            </button>
                           )}
 
                           {session.aiAnalysis && (
@@ -766,7 +798,94 @@ const InterviewStudio: React.FC = () => {
                   <Brain className="text-purple-500 mr-2" size={20} />
                   IA en temps réel
                 </h3>
+                
+                {/* Contrôles de transcription */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Transcription</span>
+                    <div className="flex items-center space-x-1">
+                      <div className={`w-2 h-2 rounded-full ${
+                        isTranscribing ? 'bg-green-500 animate-pulse' : 'bg-gray-300'
+                      }`}></div>
+                      <span className="text-xs text-gray-600">
+                        {isTranscribing ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Sélecteur de speaker */}
+                  <div className="flex space-x-2 mb-3">
+                    <button
+                      onClick={() => switchSpeaker('interviewer')}
+                      className={`px-3 py-1 text-xs rounded-full transition-colors ${
+                        currentSpeaker === 'interviewer'
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Recruteur
+                    </button>
+                    <button
+                      onClick={() => switchSpeaker('candidate')}
+                      className={`px-3 py-1 text-xs rounded-full transition-colors ${
+                        currentSpeaker === 'candidate'
+                          ? 'bg-purple-500 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Candidat
+                    </button>
+                  </div>
+                  
+                  {/* Transcription en temps réel */}
+                  {liveTranscription && (
+                    <div className="bg-white rounded-lg p-3 border border-gray-200">
+                      <div className="text-xs text-gray-500 mb-1">
+                        {currentSpeaker === 'interviewer' ? '🎤 Recruteur' : '👤 Candidat'}
+                      </div>
+                      <div className="text-sm text-gray-800">{liveTranscription}</div>
+                    </div>
+                  )}
+                  
+                  {/* Historique de transcription */}
+                  {transcriptionSegments.length > 0 && (
+                    <div className="max-h-32 overflow-y-auto bg-white rounded-lg p-3 border border-gray-200">
+                      <div className="text-xs text-gray-500 mb-2">
+                        Historique ({transcriptionSegments.length} segments)
+                      </div>
+                      <div className="space-y-1">
+                        {transcriptionSegments.slice(-3).map((segment, index) => (
+                          <div key={index} className="text-xs">
+                            <span className={`font-medium ${
+                              segment.speaker === 'interviewer' ? 'text-blue-600' : 'text-purple-600'
+                            }`}>
+                              {segment.speaker === 'interviewer' ? 'Recruteur' : 'Candidat'}:
+                            </span>
+                            <span className="text-gray-700 ml-1">{segment.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
                 <div className="space-y-3 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Durée d'enregistrement</span>
+                    <span className="font-semibold text-purple-600">{formatTime(recordingTime)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Segments transcrits</span>
+                    <span className="font-semibold text-green-600">{transcriptionSegments.length}</span>
+                  </div>
+                  {aiAnalysisLoading && (
+                    <div className="flex items-center justify-center py-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500"></div>
+                        <span className="text-sm text-gray-600">Analyse IA en cours...</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <span>Communication:</span>
                     <div className="w-20 bg-gray-200 rounded-full h-2">
@@ -966,13 +1085,169 @@ const InterviewStudio: React.FC = () => {
                 </ul>
               </div>
 
-              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-                <button
-                  onClick={() => setShowAIAnalysis(false)}
-                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-                >
-                  Fermer
-                </button>
+              {/* Résumé IA */}
+              {currentSession.aiAnalysis.summary && (
+                <div>
+                  <h3 className="font-semibold text-[#223049] mb-3 flex items-center">
+                    <FileText size={16} className="mr-2" />
+                    Résumé de l'entretien
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <p className="text-gray-700 leading-relaxed">{currentSession.aiAnalysis.summary}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Analyse des émotions */}
+              {currentSession.aiAnalysis.emotions && currentSession.aiAnalysis.emotions.length > 0 && (
+                <div>
+                  <h3 className="font-semibold text-[#223049] mb-3 flex items-center">
+                    <TrendingUp size={16} className="mr-2" />
+                    Analyse émotionnelle
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {currentSession.aiAnalysis.emotions.slice(0, 6).map((emotion, index) => (
+                      <div key={index} className="bg-gray-50 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-700">{emotion.emotion}</span>
+                          <span className="text-xs text-gray-500">
+                            {Math.round(emotion.confidence * 100)}%
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          {new Date(emotion.timestamp).toLocaleTimeString('fr-FR', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Évaluation des compétences */}
+              {currentSession.aiAnalysis.skillsAssessment && currentSession.aiAnalysis.skillsAssessment.length > 0 && (
+                <div>
+                  <h3 className="font-semibold text-[#223049] mb-3 flex items-center">
+                    <Star size={16} className="mr-2" />
+                    Évaluation des compétences
+                  </h3>
+                  <div className="space-y-3">
+                    {currentSession.aiAnalysis.skillsAssessment.map((skill, index) => (
+                      <div key={index} className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-gray-700">{skill.skill}</span>
+                          <span className="text-sm font-bold text-purple-600">{skill.level}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                          <div 
+                            className="bg-purple-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${skill.level}%` }}
+                          ></div>
+                        </div>
+                        {skill.evidence && skill.evidence.length > 0 && (
+                          <div className="text-xs text-gray-600">
+                            <strong>Preuves:</strong> {skill.evidence.join(', ')}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Transcription complète */}
+              <div>
+                <h3 className="font-semibold text-[#223049] mb-3 flex items-center">
+                  <MessageSquare size={16} className="mr-2" />
+                  Transcription complète
+                  {transcriptionSegments.length > 0 && (
+                    <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">
+                      {transcriptionSegments.length} segments
+                    </span>
+                  )}
+                </h3>
+                <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+                  {transcriptionSegments.length > 0 ? (
+                    <div className="space-y-2">
+                      {transcriptionSegments.map((segment, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <div className={`text-xs font-medium px-2 py-1 rounded-full flex-shrink-0 ${
+                            segment.speaker === 'interviewer' 
+                              ? 'bg-blue-100 text-blue-700' 
+                              : 'bg-purple-100 text-purple-700'
+                          }`}>
+                            {segment.speaker === 'interviewer' ? 'Recruteur' : 'Candidat'}
+                          </div>
+                          <div className="text-sm text-gray-700 leading-relaxed">
+                            {segment.text}
+                          </div>
+                          <div className="text-xs text-gray-400 flex-shrink-0">
+                            {new Date(segment.timestamp).toLocaleTimeString('fr-FR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit'
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-sm italic">
+                      {currentSession.aiAnalysis.transcription || 'Aucune transcription disponible'}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                <div className="text-xs text-gray-500">
+                  Analyse générée le {new Date().toLocaleString('fr-FR')}
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => {
+                      const analysisData = {
+                        candidat: currentSession.candidateName,
+                        poste: currentSession.position,
+                        date: new Date().toLocaleDateString('fr-FR'),
+                        scores: {
+                          global: currentSession.aiAnalysis.overallScore,
+                          communication: currentSession.aiAnalysis.communication,
+                          technique: currentSession.aiAnalysis.technicalSkills,
+                          motivation: currentSession.aiAnalysis.motivation,
+                          culture: currentSession.aiAnalysis.culturalFit
+                        },
+                        insights: currentSession.aiAnalysis.keyInsights,
+                        recommandations: currentSession.aiAnalysis.recommendations,
+                        resume: currentSession.aiAnalysis.summary,
+                        transcription: transcriptionSegments.length > 0 
+                          ? transcriptionSegments.map(s => `[${s.speaker}]: ${s.text}`).join('\n')
+                          : currentSession.aiAnalysis.transcription
+                      };
+                      
+                      const dataStr = JSON.stringify(analysisData, null, 2);
+                      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                      const url = URL.createObjectURL(dataBlob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = `analyse-entretien-${currentSession.candidateName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+                      link.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                  >
+                    <Download size={16} />
+                    <span>Exporter</span>
+                  </button>
+                  <button
+                    onClick={() => setShowAIAnalysis(false)}
+                    className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                  >
+                    Fermer
+                  </button>
+                </div>
               </div>
             </div>
           </div>
