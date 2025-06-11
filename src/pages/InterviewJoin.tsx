@@ -201,6 +201,18 @@ const InterviewJoin: React.FC = () => {
         videoTrack.enabled = newVideoState;
       }
     }
+    
+    // Forcer la mise à jour de l'affichage vidéo
+    if (videoRef.current && streamRef.current) {
+      if (!newVideoState) {
+        // Si la vidéo est désactivée, on peut garder le stream mais masquer l'affichage
+        console.log('📹 Vidéo désactivée');
+      } else {
+        // Si la vidéo est réactivée, s'assurer que le stream est bien affiché
+        videoRef.current.srcObject = streamRef.current;
+        console.log('📹 Vidéo réactivée');
+      }
+    }
   };
 
   const toggleAudio = () => {
@@ -238,8 +250,15 @@ const InterviewJoin: React.FC = () => {
       const localStream = await webRTCRef.current.addLocalStream(constraints);
       streamRef.current = localStream;
       
-      if (videoRef.current) {
+      // Mettre à jour l'élément vidéo local avec le nouveau stream
+      if (videoRef.current && localStream) {
         videoRef.current.srcObject = localStream;
+        try {
+          await videoRef.current.play();
+          console.log('▶️ Vidéo locale démarrée après connexion WebRTC');
+        } catch (playError) {
+          console.warn('Avertissement lecture vidéo locale:', playError);
+        }
       }
       
       // Pour la démo, simuler la connexion WebRTC
