@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
-import Sidebar from '../components/dashboard/Sidebar';
-import DashboardOverview from '../components/dashboard/DashboardOverview';
-import CandidatesList from '../components/dashboard/CandidatesList';
-import CandidateForm from '../components/dashboard/CandidateForm';
-import SourcingAI from '../components/dashboard/SourcingAI';
-import Pipeline from '../components/dashboard/Pipeline';
-import Analytics from '../components/dashboard/Analytics';
-import Calendar from '../components/dashboard/Calendar';
-import JobManagement from '../components/dashboard/JobManagement';
-import InterviewStudio from '../components/dashboard/InterviewStudio';
-import AutomationHub from '../components/dashboard/AutomationHub';
+import Sidebar from '../components/Dashboard/Sidebar';
+import DashboardOverview from '../components/Dashboard/DashboardOverview';
+import CandidatesList from '../components/Dashboard/CandidatesList';
+import CandidateForm from '../components/Dashboard/CandidateForm';
+import SourcingAI from '../components/Dashboard/SourcingAI';
+import Pipeline from '../components/Dashboard/Pipeline';
+import Analytics from '../components/Dashboard/Analytics';
+import Calendar from '../components/Dashboard/Calendar';
+import JobManagement from '../components/Dashboard/JobManagement';
+import InterviewStudio from '../components/Dashboard/InterviewStudio';
+import AutomationHub from '../components/Dashboard/AutomationHub';
 import { Candidate } from '../hooks/useCandidates';
 
 const Dashboard: React.FC = () => {
