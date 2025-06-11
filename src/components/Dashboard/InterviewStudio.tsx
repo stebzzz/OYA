@@ -32,6 +32,9 @@ import { useCandidates } from '../../hooks/useCandidates';
 import { EmailService } from '../../services/emailService';
 import { InterviewLinkService } from '../../services/interviewLinkService';
 import { interviewAIService, InterviewAnalysis, TranscriptionSegment } from '../../services/interviewAIService';
+import { FirebaseInterviewService, InterviewResult } from '../../services/firebaseInterviewService';
+import { WebRTCService, WebRTCCallbacks } from '../../services/webRTCService';
+import { Timestamp } from 'firebase/firestore';
 
 interface InterviewSession {
   id: string;
@@ -74,10 +77,15 @@ const InterviewStudio: React.FC = () => {
   const [currentSpeaker, setCurrentSpeaker] = useState<'interviewer' | 'candidate'>('candidate');
   const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
   const [liveTranscription, setLiveTranscription] = useState('');
+  const [currentInterviewResultId, setCurrentInterviewResultId] = useState<string | null>(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const [webRTCConnected, setWebRTCConnected] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recordingRef = useRef<MediaRecorder | null>(null);
+  const webRTCRef = useRef<WebRTCService | null>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -88,6 +96,15 @@ const InterviewStudio: React.FC = () => {
     }
     return () => clearInterval(interval);
   }, [isRecording, isPaused]);
+
+  // Nettoyage des ressources WebRTC lors du démontage
+  useEffect(() => {
+    return () => {
+      if (webRTCRef.current) {
+        webRTCRef.current.close();
+      }
+    };
+  }, []);
 
   const checkMediaDevices = async () => {
     try {
@@ -253,6 +270,22 @@ const InterviewStudio: React.FC = () => {
           
           setSessions(prev => prev.map(s => s.id === currentSession.id ? updatedSession : s));
           setCurrentSession(updatedSession);
+          
+          // Sauvegarder l'analyse dans Firebase
+          if (currentInterviewResultId) {
+            try {
+              await FirebaseInterviewService.completeInterview(
+                currentInterviewResultId,
+                analysis,
+                new Date(),
+                'Entretien terminé avec analyse IA'
+              );
+              console.log('✅ Analyse IA sauvegardée dans Firebase');
+            } catch (error) {
+              console.error('❌ Erreur sauvegarde Firebase:', error);
+            }
+          }
+          
           setShowAIAnalysis(true);
         }
       }
@@ -313,28 +346,110 @@ const InterviewStudio: React.FC = () => {
   };
 
   const toggleVideo = () => {
-    setVideoEnabled(!videoEnabled);
-    if (streamRef.current) {
+    const newVideoState = !videoEnabled;
+    setVideoEnabled(newVideoState);
+    
+    if (webRTCRef.current) {
+      webRTCRef.current.toggleVideo(newVideoState);
+    } else if (streamRef.current) {
       const videoTrack = streamRef.current.getVideoTracks()[0];
       if (videoTrack) {
-        videoTrack.enabled = !videoEnabled;
+        videoTrack.enabled = newVideoState;
       }
     }
   };
 
   const toggleAudio = () => {
-    setAudioEnabled(!audioEnabled);
-    if (streamRef.current) {
+    const newAudioState = !audioEnabled;
+    setAudioEnabled(newAudioState);
+    
+    if (webRTCRef.current) {
+      webRTCRef.current.toggleAudio(newAudioState);
+    } else if (streamRef.current) {
       const audioTrack = streamRef.current.getAudioTracks()[0];
       if (audioTrack) {
-        audioTrack.enabled = !audioEnabled;
+        audioTrack.enabled = newAudioState;
       }
     }
   };
 
+  const initializeWebRTC = () => {
+    const callbacks: WebRTCCallbacks = {
+      onRemoteStream: (stream) => {
+        console.log('📺 Stream distant reçu dans InterviewStudio');
+        setRemoteStream(stream);
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = stream;
+        }
+      },
+      onConnectionStateChange: (state) => {
+        console.log('🔗 État connexion WebRTC:', state);
+        setWebRTCConnected(state === 'connected');
+      },
+      onError: (error) => {
+        console.error('❌ Erreur WebRTC:', error);
+        setStreamError(`Erreur de connexion: ${error.message}`);
+      }
+    };
+    
+    webRTCRef.current = new WebRTCService(callbacks);
+  };
+
   const startSession = async (session: InterviewSession) => {
-    setCurrentSession(session);
-    await startVideoStream();
+    try {
+      setCurrentSession(session);
+      
+      // Initialiser WebRTC en tant qu'initiateur (recruteur)
+      if (!webRTCRef.current) {
+        initializeWebRTC();
+      }
+      
+      if (webRTCRef.current) {
+        await webRTCRef.current.initialize(true);
+        
+        // Ajouter le stream local
+        const constraints = {
+          video: videoEnabled,
+          audio: audioEnabled
+        };
+        
+        const localStream = await webRTCRef.current.addLocalStream(constraints);
+        streamRef.current = localStream;
+        
+        if (videoRef.current) {
+          videoRef.current.srcObject = localStream;
+        }
+        
+        // Pour la démo, simuler la connexion WebRTC
+        // En production, ceci serait géré par un serveur de signalisation
+        await webRTCRef.current.simulateConnection();
+      } else {
+        // Fallback vers le stream vidéo classique
+        await startVideoStream();
+      }
+      
+      // Créer un enregistrement Firebase pour cet entretien
+      const interviewData: Omit<InterviewResult, 'id' | 'createdAt' | 'updatedAt'> = {
+        sessionId: session.id,
+        candidateId: session.candidateId,
+        candidateName: session.candidateName,
+        candidateEmail: session.candidateEmail,
+        position: session.position,
+        recruiterId: 'current-user-id', // TODO: Récupérer l'ID du recruteur connecté
+        recruiterName: 'Recruteur', // TODO: Récupérer le nom du recruteur connecté
+        startTime: Timestamp.now(),
+        duration: session.duration,
+        status: 'in_progress'
+      };
+      
+      const resultId = await FirebaseInterviewService.createInterviewResult(interviewData);
+      setCurrentInterviewResultId(resultId);
+      console.log('✅ Entretien enregistré dans Firebase avec ID:', resultId);
+    } catch (error) {
+      console.error('❌ Erreur lors du démarrage de l\'entretien:', error);
+      setStreamError('Erreur lors du démarrage de l\'entretien');
+      // Continuer même si Firebase échoue
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -680,18 +795,54 @@ const InterviewStudio: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  muted
-                  className="w-full h-full object-cover"
-                />
+                <div className="w-full h-full flex relative">
+                  {/* Vidéo principale (candidat/distant) */}
+                  <div className="flex-1 flex items-center justify-center bg-gray-900">
+                    {remoteStream ? (
+                      <video
+                        ref={remoteVideoRef}
+                        autoPlay
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-center text-gray-400">
+                        <User size={48} className="mx-auto mb-4 opacity-50" />
+                        <p>En attente du candidat...</p>
+                        {webRTCConnected && (
+                          <div className="flex items-center justify-center mt-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                            <span className="text-sm">Connecté</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Vidéo locale (recruteur) - Picture in Picture */}
+                  <div className="absolute top-4 right-4 w-48 h-36 bg-black rounded-lg overflow-hidden border-2 border-gray-600">
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      muted
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-50 px-2 py-1 rounded">
+                      Vous (Recruteur)
+                    </div>
+                  </div>
+                </div>
               )}
               
               <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-3 py-2 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <User size={16} />
                   <span>{currentSession.candidateName}</span>
+                  {webRTCConnected && (
+                    <div className="flex items-center ml-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-1"></div>
+                      <span className="text-xs">En ligne</span>
+                    </div>
+                  )}
                 </div>
               </div>
 

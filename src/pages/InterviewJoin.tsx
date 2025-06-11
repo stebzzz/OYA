@@ -14,6 +14,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { InterviewLinkService } from '../services/interviewLinkService';
+import { WebRTCService, WebRTCCallbacks } from '../services/webRTCService';
 
 const InterviewJoin: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -31,15 +32,49 @@ const InterviewJoin: React.FC = () => {
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const [webRTCConnected, setWebRTCConnected] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const webRTCRef = useRef<WebRTCService | null>(null);
 
   useEffect(() => {
     if (token) {
       validateInvitationLink();
     }
+    initializeWebRTC();
+    
+    return () => {
+      // Nettoyage lors du démontage
+      if (webRTCRef.current) {
+        webRTCRef.current.close();
+      }
+    };
   }, [token]);
+
+  const initializeWebRTC = () => {
+    const callbacks: WebRTCCallbacks = {
+      onRemoteStream: (stream) => {
+        console.log('📺 Stream distant reçu dans InterviewJoin');
+        setRemoteStream(stream);
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = stream;
+        }
+      },
+      onConnectionStateChange: (state) => {
+        console.log('🔗 État connexion WebRTC:', state);
+        setWebRTCConnected(state === 'connected');
+      },
+      onError: (error) => {
+        console.error('❌ Erreur WebRTC:', error);
+        setErrorMessage(`Erreur de connexion: ${error.message}`);
+      }
+    };
+    
+    webRTCRef.current = new WebRTCService(callbacks);
+  };
 
   useEffect(() => {
     if (linkValid && candidateInfo.name) {
@@ -154,27 +189,35 @@ const InterviewJoin: React.FC = () => {
   };
 
   const toggleVideo = () => {
-    setVideoEnabled(!videoEnabled);
-    if (streamRef.current) {
+    const newVideoState = !videoEnabled;
+    setVideoEnabled(newVideoState);
+    
+    if (webRTCRef.current) {
+      webRTCRef.current.toggleVideo(newVideoState);
+    } else if (streamRef.current) {
       const videoTrack = streamRef.current.getVideoTracks()[0];
       if (videoTrack) {
-        videoTrack.enabled = !videoEnabled;
+        videoTrack.enabled = newVideoState;
       }
     }
   };
 
   const toggleAudio = () => {
-    setAudioEnabled(!audioEnabled);
-    if (streamRef.current) {
+    const newAudioState = !audioEnabled;
+    setAudioEnabled(newAudioState);
+    
+    if (webRTCRef.current) {
+      webRTCRef.current.toggleAudio(newAudioState);
+    } else if (streamRef.current) {
       const audioTrack = streamRef.current.getAudioTracks()[0];
       if (audioTrack) {
-        audioTrack.enabled = !audioEnabled;
+        audioTrack.enabled = newAudioState;
       }
     }
   };
 
   const joinInterview = async () => {
-    if (!token) return;
+    if (!token || !webRTCRef.current) return;
     
     setIsJoining(true);
     
@@ -182,13 +225,31 @@ const InterviewJoin: React.FC = () => {
       // Marquer le lien comme utilisé
       InterviewLinkService.markAsUsed(token);
       
-      // Simuler l'attente de connexion
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Initialiser WebRTC en tant que récepteur (candidat)
+      await webRTCRef.current.initialize(false);
+      
+      // Ajouter le stream local
+      const constraints = {
+        video: videoEnabled,
+        audio: audioEnabled
+      };
+      
+      const localStream = await webRTCRef.current.addLocalStream(constraints);
+      streamRef.current = localStream;
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = localStream;
+      }
+      
+      // Pour la démo, simuler la connexion WebRTC
+      // En production, ceci serait géré par un serveur de signalisation
+      await webRTCRef.current.simulateConnection();
       
       setHasJoined(true);
       setIsJoining(false);
       
     } catch (error) {
+      console.error('❌ Erreur joinInterview:', error);
       setIsJoining(false);
       setErrorMessage('Erreur lors de la connexion à l\'entretien');
     }
@@ -198,6 +259,11 @@ const InterviewJoin: React.FC = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
+    
+    if (webRTCRef.current) {
+      webRTCRef.current.close();
+    }
+    
     navigate('/');
   };
 
@@ -273,13 +339,41 @@ const InterviewJoin: React.FC = () => {
         </div>
 
         {/* Video Area */}
-        <div className="flex-1 flex items-center justify-center relative">
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            className="max-w-full max-h-full object-cover rounded-lg"
-          />
+        <div className="flex-1 flex relative">
+          {/* Video principal (recruteur/distant) */}
+          <div className="flex-1 flex items-center justify-center bg-gray-900">
+            {remoteStream ? (
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                className="max-w-full max-h-full object-cover"
+              />
+            ) : (
+              <div className="text-center text-gray-400">
+                <Camera size={48} className="mx-auto mb-4 opacity-50" />
+                <p>En attente du recruteur...</p>
+                {webRTCConnected && (
+                  <div className="flex items-center justify-center mt-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                    <span className="text-sm">Connecté</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          
+          {/* Vidéo locale (candidat) - Picture in Picture */}
+          <div className="absolute top-4 right-4 w-48 h-36 bg-black rounded-lg overflow-hidden border-2 border-gray-600">
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute bottom-2 left-2 text-white text-xs bg-black bg-opacity-50 px-2 py-1 rounded">
+              Vous
+            </div>
+          </div>
           
           {/* Controls */}
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
@@ -303,11 +397,24 @@ const InterviewJoin: React.FC = () => {
           </div>
         </div>
 
-        {/* Chat area could be added here */}
+        {/* Status bar */}
         <div className="bg-gray-900 p-4 text-center">
-          <p className="text-gray-400 text-sm">
-            Entretien en cours • Le recruteur vous rejoindra sous peu
-          </p>
+          <div className="flex items-center justify-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <div className={`w-2 h-2 rounded-full ${
+                webRTCConnected ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'
+              }`}></div>
+              <span className="text-gray-400 text-sm">
+                {webRTCConnected ? 'Connexion établie' : 'Connexion en cours...'}
+              </span>
+            </div>
+            {remoteStream && (
+              <span className="text-gray-400 text-sm">•</span>
+            )}
+            <span className="text-gray-400 text-sm">
+              {remoteStream ? 'Entretien en cours' : 'En attente du recruteur'}
+            </span>
+          </div>
         </div>
       </div>
     );
