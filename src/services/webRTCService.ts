@@ -404,18 +404,65 @@ export class WebRTCService {
   }
 
   /**
-   * Gérer une offre reçue
+   * Gérer une offre reçue (côté candidat)
    */
   private async handleOffer(offer: RTCSessionDescriptionInit): Promise<void> {
-    if (!this.peerConnection) return;
-    
-    await this.peerConnection.setRemoteDescription(offer);
-    const answer = await this.peerConnection.createAnswer();
-    await this.peerConnection.setLocalDescription(answer);
-    
-    // Envoyer la réponse via la signalisation
-    const userType = this.isInitiator ? 'recruiter' : 'candidate';
-    await WebRTCSignalingService.sendAnswer(this.sessionId!, answer, userType);
+    if (!this.peerConnection) {
+      throw new Error('PeerConnection non initialisée');
+    }
+
+    try {
+      console.log('📥 Réception offre:', {
+        type: offer.type,
+        sdpLength: offer.sdp?.length,
+        hasVideo: offer.sdp?.includes('m=video'),
+        hasAudio: offer.sdp?.includes('m=audio'),
+        peerConnectionState: this.peerConnection.connectionState,
+        signalingState: this.peerConnection.signalingState
+      });
+      
+      await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+      console.log('✅ Offre définie comme description distante');
+      
+      // Vérifier l'état après avoir défini la description distante
+      console.log('🔍 État après setRemoteDescription:', {
+        signalingState: this.peerConnection.signalingState,
+        connectionState: this.peerConnection.connectionState,
+        iceConnectionState: this.peerConnection.iceConnectionState
+      });
+      
+      // Vérifier les transceivers créés
+      const transceivers = this.peerConnection.getTransceivers();
+      console.log('🔄 Transceivers après offre:', transceivers.length);
+      transceivers.forEach((transceiver, index) => {
+        console.log(`🔄 Transceiver ${index}:`, {
+          direction: transceiver.direction,
+          currentDirection: transceiver.currentDirection,
+          mid: transceiver.mid,
+          sender: {
+            track: transceiver.sender.track?.kind,
+            hasTrack: !!transceiver.sender.track
+          },
+          receiver: {
+            track: transceiver.receiver.track?.kind,
+            hasTrack: !!transceiver.receiver.track
+          }
+        });
+      });
+
+      const answer = await this.createAnswer();
+       
+       // Envoyer la réponse via la signalisation
+       const userType = this.callbacks.getUserType?.() || 'candidate';
+       console.log('📨 Envoi réponse avec userType:', userType);
+       await WebRTCSignalingService.sendAnswer(this.sessionId!, answer, userType);
+      
+      console.log('✅ Réponse WebRTC envoyée');
+    } catch (error) {
+      console.error('❌ Erreur traitement offre:', error);
+      this.callbacks.onError?.(error as Error);
+      throw error;
+    }
   }
 
   /**
@@ -457,20 +504,36 @@ export class WebRTCService {
       }
 
       if (this.isInitiator) {
-        // Vérifier que les tracks sont bien ajoutés
+        console.log('🚀 Démarrage connexion en tant qu\'initiateur (recruteur)');
+        
+        // Vérifier que les tracks sont bien ajoutés avant de créer l'offre
         const senders = this.peerConnection.getSenders();
+        const transceivers = this.peerConnection.getTransceivers();
+        
         console.log('🔍 Vérification avant création offre:', {
-          sendersCount: senders.length,
+          senders: senders.length,
+          transceivers: transceivers.length,
           localStreamTracks: this.localStream?.getTracks().length || 0,
-          hasVideoTrack: senders.some(s => s.track?.kind === 'video'),
-          hasAudioTrack: senders.some(s => s.track?.kind === 'audio')
+          hasVideo: this.localStream?.getVideoTracks().length || 0,
+          hasAudio: this.localStream?.getAudioTracks().length || 0,
+          peerConnectionState: this.peerConnection.connectionState,
+          signalingState: this.peerConnection.signalingState
+        });
+        
+        // Vérifier chaque sender
+        senders.forEach((sender, index) => {
+          console.log(`📡 Sender ${index} avant offre:`, {
+            hasTrack: !!sender.track,
+            trackKind: sender.track?.kind,
+            trackEnabled: sender.track?.enabled,
+            trackReadyState: sender.track?.readyState
+          });
         });
         
         if (senders.length === 0) {
-          console.warn('⚠️ Aucun sender trouvé, les tracks ne sont peut-être pas ajoutés');
+          console.warn('⚠️ Aucun sender trouvé! Les tracks n\'ont peut-être pas été ajoutés correctement.');
         }
         
-        // Le recruteur crée l'offre
         const offer = await this.peerConnection.createOffer({
           offerToReceiveAudio: true,
           offerToReceiveVideo: true
@@ -478,18 +541,18 @@ export class WebRTCService {
         
         await this.peerConnection.setLocalDescription(offer);
         
-        console.log('📋 Offre créée:', {
+        console.log('📤 Offre créée et définie:', {
           type: offer.type,
           sdpLength: offer.sdp?.length,
           hasVideo: offer.sdp?.includes('m=video'),
-          hasAudio: offer.sdp?.includes('m=audio')
+          hasAudio: offer.sdp?.includes('m=audio'),
+          sdpPreview: offer.sdp?.substring(0, 200) + '...'
         });
         
         // Envoyer l'offre via la signalisation
-        const userType = this.isInitiator ? 'recruiter' : 'candidate';
-        await WebRTCSignalingService.sendOffer(this.sessionId, offer, userType);
-        
-        console.log('📤 Offre WebRTC envoyée');
+      const userType = this.callbacks.getUserType?.() || 'recruiter';
+      console.log('📨 Envoi offre via signalisation avec userType:', userType);
+      await WebRTCSignalingService.sendOffer(this.sessionId!, offer, userType);
       } else {
         // Le candidat attend l'offre
         console.log('⏳ En attente de l\'offre WebRTC...');
