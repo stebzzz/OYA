@@ -417,8 +417,8 @@ const InterviewJoin: React.FC = () => {
       // Importer le service de signalisation
       const { WebRTCSignalingService } = await import('../services/webRTCSignalingService');
       
-      // Envoyer l'offre simulée
-      await WebRTCSignalingService.sendOffer(linkData.sessionId, mockOffer);
+      // Envoyer l'offre simulée (simuler un recruteur)
+      await WebRTCSignalingService.sendOffer(linkData.sessionId, mockOffer, 'recruiter');
       
       console.log('✅ Test: Offre WebRTC simulée envoyée');
     } catch (error) {

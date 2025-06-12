@@ -318,7 +318,8 @@ export class WebRTCService {
     await this.peerConnection.setLocalDescription(answer);
     
     // Envoyer la réponse via la signalisation
-    await WebRTCSignalingService.sendAnswer(this.sessionId!, answer);
+    const userType = this.isInitiator ? 'recruiter' : 'candidate';
+    await WebRTCSignalingService.sendAnswer(this.sessionId!, answer, userType);
   }
 
   /**
@@ -369,7 +370,8 @@ export class WebRTCService {
         await this.peerConnection.setLocalDescription(offer);
         
         // Envoyer l'offre via la signalisation
-        await WebRTCSignalingService.sendOffer(this.sessionId, offer);
+        const userType = this.isInitiator ? 'recruiter' : 'candidate';
+        await WebRTCSignalingService.sendOffer(this.sessionId, offer, userType);
         
         console.log('📤 Offre WebRTC envoyée');
       } else {

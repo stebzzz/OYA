@@ -135,26 +135,28 @@ export class WebRTCSignalingService {
   /**
    * Envoyer une offre WebRTC
    */
-  static async sendOffer(sessionId: string, offer: RTCSessionDescriptionInit): Promise<void> {
+  static async sendOffer(sessionId: string, offer: RTCSessionDescriptionInit, from: 'recruiter' | 'candidate' = 'recruiter'): Promise<void> {
+    const to = from === 'recruiter' ? 'candidate' : 'recruiter';
     await this.sendSignalingData({
       sessionId,
       type: 'offer',
       data: offer,
-      from: 'recruiter',
-      to: 'candidate'
+      from,
+      to
     });
   }
 
   /**
    * Envoyer une réponse WebRTC
    */
-  static async sendAnswer(sessionId: string, answer: RTCSessionDescriptionInit): Promise<void> {
+  static async sendAnswer(sessionId: string, answer: RTCSessionDescriptionInit, from: 'recruiter' | 'candidate'): Promise<void> {
+    const to = from === 'recruiter' ? 'candidate' : 'recruiter';
     await this.sendSignalingData({
       sessionId,
       type: 'answer',
       data: answer,
-      from: 'candidate',
-      to: 'recruiter'
+      from,
+      to
     });
   }
 
