@@ -85,9 +85,17 @@ export class WebRTCSignalingService {
             this.markAsProcessed(data.id!);
           } else {
             console.log('❌ Message filtré:', {
+              messageSessionId: data.sessionId,
+              targetSessionId: sessionId,
               sessionMatch: data.sessionId === sessionId,
+              messageTo: data.to,
+              targetUserType: userType,
               userMatch: data.to === userType,
-              notProcessed: !data.processed
+              messageProcessed: data.processed,
+              notProcessed: !data.processed,
+              reason: data.sessionId !== sessionId ? 'Session mismatch' : 
+                     data.to !== userType ? 'User type mismatch' : 
+                     data.processed ? 'Already processed' : 'Unknown'
             });
           }
         }

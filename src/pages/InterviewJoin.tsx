@@ -366,18 +366,64 @@ const InterviewJoin: React.FC = () => {
     }
   };
 
-  const generateAIInsights = () => {
-    const insights = [
-      '🎯 Excellente communication verbale observée',
-      '💡 Réponses structurées et pertinentes',
-      '⚡ Bonne réactivité aux questions',
-      '🤝 Attitude professionnelle et engagée',
-      '📈 Potentiel de développement élevé'
-    ];
-    
-    setAiInsights(insights);
-    setShowAIInsights(true);
-    console.log('🧠 Insights IA générés');
+  const generateAIInsights = async () => {
+    try {
+      // Simuler l'analyse IA
+      const insights = [
+        {
+          type: 'behavior',
+          title: 'Contact visuel',
+          score: 85,
+          description: 'Bon contact visuel avec la caméra'
+        },
+        {
+          type: 'communication',
+          title: 'Clarté d\'expression',
+          score: 78,
+          description: 'Expression claire et structurée'
+        },
+        {
+          type: 'confidence',
+          title: 'Niveau de confiance',
+          score: 82,
+          description: 'Posture confiante et assurée'
+        }
+      ];
+      
+      setAiInsights(insights);
+      setShowAIInsights(true);
+      console.log('🧠 Insights IA générés');
+    } catch (error) {
+      console.error('Erreur génération insights IA:', error);
+    }
+  };
+
+  // Fonction de test pour simuler une offre WebRTC
+  const testWebRTCOffer = async () => {
+    if (!linkData?.sessionId) {
+      console.error('❌ Pas de sessionId disponible pour le test');
+      return;
+    }
+
+    try {
+      console.log('🧪 Test: Simulation d\'une offre WebRTC pour session:', linkData.sessionId);
+      
+      // Simuler une offre WebRTC basique
+      const mockOffer = {
+        type: 'offer' as RTCSdpType,
+        sdp: 'v=0\r\no=- 123456789 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0 1\r\na=msid-semantic: WMS\r\nm=audio 9 UDP/TLS/RTP/SAVPF 111\r\nc=IN IP4 0.0.0.0\r\na=rtcp:9 IN IP4 0.0.0.0\r\na=ice-ufrag:test\r\na=ice-pwd:test\r\na=fingerprint:sha-256 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00\r\na=setup:actpass\r\na=mid:0\r\na=sendrecv\r\na=rtcp-mux\r\na=rtpmap:111 opus/48000/2\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\nc=IN IP4 0.0.0.0\r\na=rtcp:9 IN IP4 0.0.0.0\r\na=ice-ufrag:test\r\na=ice-pwd:test\r\na=fingerprint:sha-256 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00\r\na=setup:actpass\r\na=mid:1\r\na=sendrecv\r\na=rtcp-mux\r\na=rtpmap:96 VP8/90000\r\n'
+      };
+
+      // Importer le service de signalisation
+      const { WebRTCSignalingService } = await import('../services/webRTCSignalingService');
+      
+      // Envoyer l'offre simulée
+      await WebRTCSignalingService.sendOffer(linkData.sessionId, mockOffer);
+      
+      console.log('✅ Test: Offre WebRTC simulée envoyée');
+    } catch (error) {
+      console.error('❌ Test: Erreur envoi offre simulée:', error);
+    }
   };
 
   // Écouter les changements de plein écran
@@ -751,6 +797,12 @@ const InterviewJoin: React.FC = () => {
                     </button>
                   </div>
                   <button
+                    onClick={testWebRTCOffer}
+                    className="w-full mt-2 px-3 py-2 text-xs bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors"
+                  >
+                    🧪 Test Offre WebRTC
+                  </button>
+                  <button
                     onClick={() => {
                       console.log('📊 État actuel:');
                       console.log('- mediaReady:', mediaReady);
@@ -758,6 +810,8 @@ const InterviewJoin: React.FC = () => {
                       console.log('- audioEnabled:', audioEnabled);
                       console.log('- streamRef.current:', streamRef.current);
                       console.log('- videoRef.current:', videoRef.current);
+                      console.log('- linkData:', linkData);
+                      console.log('- connectionState:', connectionState);
                     }}
                     className="w-full mt-2 px-3 py-2 text-xs bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
                   >
