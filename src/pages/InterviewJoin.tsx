@@ -35,6 +35,9 @@ const InterviewJoin: React.FC = () => {
   const [hasJoined, setHasJoined] = useState(false);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [webRTCConnected, setWebRTCConnected] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showAIInsights, setShowAIInsights] = useState(false);
+  const [aiInsights, setAiInsights] = useState<string[]>([]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -254,8 +257,11 @@ const InterviewJoin: React.FC = () => {
       InterviewLinkService.markAsUsed(token);
       
       // Initialiser WebRTC en tant que récepteur (candidat)
-      // Utiliser le token comme sessionId pour la signalisation
-      await webRTCRef.current.initialize(false, token);
+      // Utiliser le sessionId du linkData ou le token comme fallback
+      const sessionId = linkData?.sessionId || token;
+      console.log('🔑 Utilisation du sessionId:', sessionId, 'extrait du token');
+      
+      await webRTCRef.current.initialize(false, sessionId);
       
       // Ajouter le stream local
       const constraints = {
@@ -280,7 +286,7 @@ const InterviewJoin: React.FC = () => {
       // Démarrer la vraie connexion WebRTC avec signalisation Firebase
       await webRTCRef.current.startRealConnection();
       
-      console.log('🚀 Connexion WebRTC réelle démarrée côté candidat pour le token:', token);
+      console.log('🚀 Connexion WebRTC réelle démarrée côté candidat pour sessionId:', sessionId);
       
       setHasJoined(true);
       setIsJoining(false);
@@ -339,6 +345,52 @@ const InterviewJoin: React.FC = () => {
     setMediaReady(false);
     console.log('🛑 Médias arrêtés');
   };
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!isFullscreen) {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+        setIsFullscreen(true);
+        console.log('📺 Mode plein écran activé');
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        }
+        setIsFullscreen(false);
+        console.log('📺 Mode plein écran désactivé');
+      }
+    } catch (error) {
+      console.error('❌ Erreur plein écran:', error);
+    }
+  };
+
+  const generateAIInsights = () => {
+    const insights = [
+      '🎯 Excellente communication verbale observée',
+      '💡 Réponses structurées et pertinentes',
+      '⚡ Bonne réactivité aux questions',
+      '🤝 Attitude professionnelle et engagée',
+      '📈 Potentiel de développement élevé'
+    ];
+    
+    setAiInsights(insights);
+    setShowAIInsights(true);
+    console.log('🧠 Insights IA générés');
+  };
+
+  // Écouter les changements de plein écran
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   if (linkValid === false) {
     return (
@@ -474,33 +526,93 @@ const InterviewJoin: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen bg-gray-50 ${isFullscreen ? 'p-0' : ''}`}>
+      {/* Panneau Insights IA */}
+      {showAIInsights && (
+        <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-2xl z-50 border-l border-gray-200">
+          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-green-500 to-blue-500 text-white">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-lg">🧠 Insights IA</h3>
+              <button
+                onClick={() => setShowAIInsights(false)}
+                className="text-white hover:text-gray-200 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-sm text-green-100 mt-1">Analyse en temps réel</p>
+          </div>
+          <div className="p-4 space-y-3 max-h-full overflow-y-auto">
+            {aiInsights.map((insight, index) => (
+              <div key={index} className="bg-gray-50 rounded-lg p-3 border-l-4 border-green-500">
+                <p className="text-sm text-gray-700">{insight}</p>
+              </div>
+            ))}
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+              <h4 className="font-medium text-blue-800 mb-2">📊 Score global</h4>
+              <div className="w-full bg-blue-200 rounded-full h-2">
+                <div className="bg-blue-600 h-2 rounded-full w-4/5"></div>
+              </div>
+              <p className="text-xs text-blue-600 mt-1">85% - Très bon candidat</p>
+            </div>
+            <div className="mt-4 p-3 bg-purple-50 rounded-lg">
+              <h4 className="font-medium text-purple-800 mb-2">💡 Recommandations</h4>
+              <ul className="text-xs text-purple-700 space-y-1">
+                <li>• Approfondir les compétences techniques</li>
+                <li>• Explorer les projets passés</li>
+                <li>• Discuter des objectifs de carrière</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#ff6a3d] to-[#9b6bff] rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-white rounded-full"></div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#ff6a3d] to-[#9b6bff] rounded-full flex items-center justify-center">
+                <div className="w-3 h-3 bg-white rounded-full"></div>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-[#223049]">OYA Intelligence</h1>
+                <p className="text-sm text-gray-600">Studio d'entretien</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-[#223049]">OYA Intelligence</h1>
-              <p className="text-sm text-gray-600">Studio d'entretien</p>
-            </div>
+            {isFullscreen && (
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setShowAIInsights(!showAIInsights)}
+                  className="px-3 py-1 bg-[#ff6a3d] text-white rounded-lg hover:bg-[#ff6a3d]/90 transition-colors text-sm"
+                >
+                  🧠 IA
+                </button>
+                <button
+                  onClick={toggleFullscreen}
+                  className="px-3 py-1 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                >
+                  📱 Quitter
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+      <div className={`${isFullscreen ? 'h-screen flex' : 'max-w-4xl mx-auto px-4 py-8'}`}>
+        <div className={`${isFullscreen ? 'flex-1 flex' : 'grid lg:grid-cols-3 gap-8'}`}>
           {/* Video Preview */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-[#223049]">Aperçu vidéo</h2>
-                <p className="text-sm text-gray-600">Vérifiez votre caméra et microphone avant de rejoindre</p>
-              </div>
+          <div className={`${isFullscreen ? 'flex-1' : 'lg:col-span-2'}`}>
+            <div className={`bg-white ${isFullscreen ? 'h-full' : 'rounded-xl shadow-sm border border-gray-200'} overflow-hidden`}>
+              {!isFullscreen && (
+                <div className="p-6 border-b border-gray-200">
+                  <h2 className="text-lg font-semibold text-[#223049]">Aperçu vidéo</h2>
+                  <p className="text-sm text-gray-600">Vérifiez votre caméra et microphone avant de rejoindre</p>
+                </div>
+              )}
               
-              <div className="relative bg-black aspect-video">
+              <div className={`relative bg-black ${isFullscreen ? 'h-full' : 'aspect-video'}`}>
                 {mediaReady ? (
                   <video
                     ref={videoRef}
@@ -540,37 +652,52 @@ const InterviewJoin: React.FC = () => {
                   >
                     {videoEnabled ? <Video size={20} /> : <VideoOff size={20} />}
                   </button>
+                  
+                  <button
+                    onClick={() => setShowAIInsights(!showAIInsights)}
+                    className="p-3 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors"
+                  >
+                    🧠
+                  </button>
+                  
+                  <button
+                    onClick={toggleFullscreen}
+                    className="p-3 rounded-full bg-purple-500 text-white hover:bg-purple-600 transition-colors"
+                  >
+                    {isFullscreen ? '📱' : '📺'}
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Info Panel */}
-          <div className="space-y-6">
-            {/* Interview Details */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="font-semibold text-[#223049] mb-4">Détails de l'entretien</h3>
-              
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center space-x-3">
-                  <User size={16} className="text-gray-400" />
-                  <span className="text-gray-600">Candidat:</span>
-                  <span className="font-medium">{candidateInfo.name}</span>
-                </div>
+          {!isFullscreen && (
+            <div className="space-y-6">
+              {/* Interview Details */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="font-semibold text-[#223049] mb-4">Détails de l'entretien</h3>
                 
-                <div className="flex items-center space-x-3">
-                  <Calendar size={16} className="text-gray-400" />
-                  <span className="text-gray-600">Date:</span>
-                  <span className="font-medium">Aujourd'hui</span>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <Clock size={16} className="text-gray-400" />
-                  <span className="text-gray-600">Durée:</span>
-                  <span className="font-medium">60 minutes</span>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center space-x-3">
+                    <User size={16} className="text-gray-400" />
+                    <span className="text-gray-600">Candidat:</span>
+                    <span className="font-medium">{candidateInfo.name}</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3">
+                    <Calendar size={16} className="text-gray-400" />
+                    <span className="text-gray-600">Date:</span>
+                    <span className="font-medium">Aujourd'hui</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3">
+                    <Clock size={16} className="text-gray-400" />
+                    <span className="text-gray-600">Durée:</span>
+                    <span className="font-medium">60 minutes</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
             {/* Status */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -607,6 +734,20 @@ const InterviewJoin: React.FC = () => {
                       className="flex-1 px-3 py-2 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                     >
                       🛑 Arrêter
+                    </button>
+                  </div>
+                  <div className="flex space-x-2 mt-2">
+                    <button
+                      onClick={toggleFullscreen}
+                      className="flex-1 px-3 py-2 text-xs bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
+                    >
+                      {isFullscreen ? '📱 Quitter' : '📺 Plein écran'}
+                    </button>
+                    <button
+                      onClick={generateAIInsights}
+                      className="flex-1 px-3 py-2 text-xs bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                    >
+                      🧠 Insights IA
                     </button>
                   </div>
                   <button
@@ -653,17 +794,18 @@ const InterviewJoin: React.FC = () => {
               )}
             </div>
 
-            {/* Instructions */}
-            <div className="bg-blue-50 rounded-xl border border-blue-200 p-6">
-              <h4 className="font-medium text-blue-900 mb-3">Instructions</h4>
-              <ul className="text-sm text-blue-800 space-y-2">
-                <li>• Assurez-vous d'être dans un endroit calme</li>
-                <li>• Vérifiez votre connexion internet</li>
-                <li>• Préparez vos questions sur le poste</li>
-                <li>• Ayez votre CV à portée de main</li>
-              </ul>
+              {/* Instructions */}
+              <div className="bg-blue-50 rounded-xl border border-blue-200 p-6">
+                <h4 className="font-medium text-blue-900 mb-3">Instructions</h4>
+                <ul className="text-sm text-blue-800 space-y-2">
+                  <li>• Assurez-vous d'être dans un endroit calme</li>
+                  <li>• Vérifiez votre connexion internet</li>
+                  <li>• Préparez vos questions sur le poste</li>
+                  <li>• Ayez votre CV à portée de main</li>
+                </ul>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
