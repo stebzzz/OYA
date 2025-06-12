@@ -1,3 +1,5 @@
+import { WebRTCSignalingService } from './webRTCSignalingService';
+
 export interface WebRTCConnection {
   localStream: MediaStream | null;
   remoteStream: MediaStream | null;
@@ -17,6 +19,8 @@ export class WebRTCService {
   private localStream: MediaStream | null = null;
   private callbacks: WebRTCCallbacks = {};
   private isInitiator = false;
+  private sessionId: string | null = null;
+  private signalingUnsubscribe: (() => void) | null = null;
 
   // Configuration STUN/TURN pour la connexion WebRTC
   private readonly rtcConfiguration: RTCConfiguration = {
@@ -33,17 +37,23 @@ export class WebRTCService {
   }
 
   /**
-   * Initialiser la connexion WebRTC
+   * Initialiser la connexion WebRTC avec signalisation
    */
-  async initialize(isInitiator: boolean = false): Promise<void> {
+  async initialize(isInitiator: boolean = false, sessionId?: string): Promise<void> {
     try {
       this.isInitiator = isInitiator;
+      this.sessionId = sessionId || Date.now().toString();
       this.peerConnection = new RTCPeerConnection(this.rtcConfiguration);
       
       // Configurer les événements
       this.setupPeerConnectionEvents();
       
-      console.log('✅ WebRTC initialisé', { isInitiator });
+      // Démarrer l'écoute de la signalisation si on a un sessionId
+      if (this.sessionId) {
+        this.startSignalingListener();
+      }
+      
+      console.log('✅ WebRTC initialisé', { isInitiator, sessionId: this.sessionId });
     } catch (error) {
       console.error('❌ Erreur initialisation WebRTC:', error);
       this.callbacks.onError?.(error as Error);
@@ -72,9 +82,12 @@ export class WebRTCService {
 
     // Candidats ICE
     this.peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
+      if (event.candidate && this.sessionId) {
         console.log('🧊 Nouveau candidat ICE:', event.candidate);
         this.callbacks.onIceCandidate?.(event.candidate);
+        
+        // Envoyer le candidat ICE via la signalisation
+        this.sendIceCandidateViaSignaling(event.candidate);
       }
     };
 
@@ -231,6 +244,12 @@ export class WebRTCService {
    * Fermer la connexion
    */
   close(): void {
+    // Arrêter l'écoute de la signalisation
+    if (this.signalingUnsubscribe) {
+      this.signalingUnsubscribe();
+      this.signalingUnsubscribe = null;
+    }
+
     // Arrêter le stream local
     if (this.localStream) {
       this.localStream.getTracks().forEach(track => track.stop());
@@ -247,25 +266,128 @@ export class WebRTCService {
   }
 
   /**
-   * Simuler une connexion pour les tests (sans vrai peer)
+   * Démarrer l'écoute de la signalisation Firebase
    */
-  async simulateConnection(): Promise<void> {
+  private startSignalingListener(): void {
+    if (!this.sessionId) return;
+    
+    // Service de signalisation déjà importé
+    const userType = this.isInitiator ? 'recruiter' : 'candidate';
+    
+    this.signalingUnsubscribe = WebRTCSignalingService.listenForSignalingData(
+      this.sessionId,
+      userType,
+      this.handleSignalingData.bind(this)
+    );
+  }
+
+  /**
+   * Gérer les données de signalisation reçues
+   */
+  private async handleSignalingData(data: any): Promise<void> {
     try {
-      // Créer un stream local
-      await this.addLocalStream();
-      
-      // Simuler la réception d'un stream distant (copie du local pour test)
-      setTimeout(() => {
-        if (this.localStream) {
-          console.log('🎭 Simulation: stream distant reçu');
-          this.callbacks.onRemoteStream?.(this.localStream);
-          this.callbacks.onConnectionStateChange?.('connected');
-        }
-      }, 1000);
+      switch (data.type) {
+        case 'offer':
+          if (!this.isInitiator) {
+            await this.handleOffer(data.data);
+          }
+          break;
+        case 'answer':
+          if (this.isInitiator) {
+            await this.handleAnswer(data.data);
+          }
+          break;
+        case 'ice-candidate':
+          await this.handleIceCandidate(data.data);
+          break;
+      }
     } catch (error) {
-      console.error('❌ Erreur simulation connexion:', error);
+      console.error('❌ Erreur traitement signalisation:', error);
       this.callbacks.onError?.(error as Error);
     }
+  }
+
+  /**
+   * Gérer une offre reçue
+   */
+  private async handleOffer(offer: RTCSessionDescriptionInit): Promise<void> {
+    if (!this.peerConnection) return;
+    
+    await this.peerConnection.setRemoteDescription(offer);
+    const answer = await this.peerConnection.createAnswer();
+    await this.peerConnection.setLocalDescription(answer);
+    
+    // Envoyer la réponse via la signalisation
+    await WebRTCSignalingService.sendAnswer(this.sessionId!, answer);
+  }
+
+  /**
+   * Gérer une réponse reçue
+   */
+  private async handleAnswer(answer: RTCSessionDescriptionInit): Promise<void> {
+    if (!this.peerConnection) return;
+    
+    await this.peerConnection.setRemoteDescription(answer);
+  }
+
+  /**
+   * Gérer un candidat ICE reçu
+   */
+  private async handleIceCandidate(candidateData: any): Promise<void> {
+    if (!this.peerConnection) return;
+    
+    const candidate = new RTCIceCandidate(candidateData);
+    await this.peerConnection.addIceCandidate(candidate);
+  }
+
+  /**
+   * Envoyer un candidat ICE via la signalisation
+   */
+  private async sendIceCandidateViaSignaling(candidate: RTCIceCandidate): Promise<void> {
+    if (!this.sessionId) return;
+    
+    const userType = this.isInitiator ? 'recruiter' : 'candidate';
+    await WebRTCSignalingService.sendIceCandidate(this.sessionId, candidate, userType);
+  }
+
+  /**
+   * Démarrer une connexion WebRTC réelle (remplace simulateConnection)
+   */
+  async startRealConnection(): Promise<void> {
+    try {
+      if (!this.sessionId || !this.peerConnection) {
+        throw new Error('WebRTC non initialisé correctement');
+      }
+
+      if (this.isInitiator) {
+        // Le recruteur crée l'offre
+        const offer = await this.peerConnection.createOffer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true
+        });
+        
+        await this.peerConnection.setLocalDescription(offer);
+        
+        // Envoyer l'offre via la signalisation
+        await WebRTCSignalingService.sendOffer(this.sessionId, offer);
+        
+        console.log('📤 Offre WebRTC envoyée');
+      } else {
+        // Le candidat attend l'offre
+        console.log('⏳ En attente de l\'offre WebRTC...');
+      }
+    } catch (error) {
+      console.error('❌ Erreur démarrage connexion réelle:', error);
+      this.callbacks.onError?.(error as Error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtenir l'ID de session
+   */
+  getSessionId(): string | null {
+    return this.sessionId;
   }
 }
 

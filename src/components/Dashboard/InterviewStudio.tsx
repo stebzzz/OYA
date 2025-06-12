@@ -405,7 +405,7 @@ const InterviewStudio: React.FC = () => {
       }
       
       if (webRTCRef.current) {
-        await webRTCRef.current.initialize(true);
+        await webRTCRef.current.initialize(true, session.id);
         
         // Ajouter le stream local
         const constraints = {
@@ -420,9 +420,10 @@ const InterviewStudio: React.FC = () => {
           videoRef.current.srcObject = localStream;
         }
         
-        // Pour la démo, simuler la connexion WebRTC
-        // En production, ceci serait géré par un serveur de signalisation
-        await webRTCRef.current.simulateConnection();
+        // Démarrer la vraie connexion WebRTC avec signalisation Firebase
+        await webRTCRef.current.startRealConnection();
+        
+        console.log('🚀 Connexion WebRTC réelle démarrée pour la session:', session.id);
       } else {
         // Fallback vers le stream vidéo classique
         await startVideoStream();

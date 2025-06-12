@@ -160,12 +160,27 @@ const InterviewJoin: React.FC = () => {
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        
+        // Forcer les attributs vidéo
+        videoRef.current.muted = true;
+        videoRef.current.playsInline = true;
+        
         try {
           await videoRef.current.play();
           console.log('▶️ Lecture vidéo démarrée');
         } catch (playError) {
           console.warn('Avertissement lecture vidéo:', playError);
-          // La lecture peut échouer mais le stream reste valide
+          // Essayer de forcer la lecture après un délai
+          setTimeout(async () => {
+            try {
+              if (videoRef.current) {
+                await videoRef.current.play();
+                console.log('▶️ Lecture vidéo forcée réussie');
+              }
+            } catch (retryError) {
+              console.error('❌ Échec lecture vidéo forcée:', retryError);
+            }
+          }, 500);
         }
       }
       
@@ -239,7 +254,8 @@ const InterviewJoin: React.FC = () => {
       InterviewLinkService.markAsUsed(token);
       
       // Initialiser WebRTC en tant que récepteur (candidat)
-      await webRTCRef.current.initialize(false);
+      // Utiliser le token comme sessionId pour la signalisation
+      await webRTCRef.current.initialize(false, token);
       
       // Ajouter le stream local
       const constraints = {
@@ -261,9 +277,10 @@ const InterviewJoin: React.FC = () => {
         }
       }
       
-      // Pour la démo, simuler la connexion WebRTC
-      // En production, ceci serait géré par un serveur de signalisation
-      await webRTCRef.current.simulateConnection();
+      // Démarrer la vraie connexion WebRTC avec signalisation Firebase
+      await webRTCRef.current.startRealConnection();
+      
+      console.log('🚀 Connexion WebRTC réelle démarrée côté candidat pour le token:', token);
       
       setHasJoined(true);
       setIsJoining(false);
@@ -289,8 +306,24 @@ const InterviewJoin: React.FC = () => {
 
   const testMedia = async () => {
     console.log('🧪 Test manuel des médias...');
-    await checkMediaDevices();
-    await initializeMedia();
+    
+    // Arrêter le stream existant
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    
+    setMediaReady(false);
+    setErrorMessage('');
+    
+    try {
+      await checkMediaDevices();
+      await initializeMedia();
+      console.log('✅ Test média réussi');
+    } catch (error) {
+      console.error('❌ Échec test média:', error);
+      setErrorMessage('Échec du test média. Vérifiez vos permissions.');
+    }
   };
 
   const stopMedia = () => {
@@ -473,7 +506,11 @@ const InterviewJoin: React.FC = () => {
                     ref={videoRef}
                     autoPlay
                     muted
+                    playsInline
                     className="w-full h-full object-cover"
+                    onLoadedMetadata={() => console.log('📹 Métadonnées vidéo chargées')}
+                    onCanPlay={() => console.log('📹 Vidéo prête à être lue')}
+                    onError={(e) => console.error('❌ Erreur vidéo:', e)}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
