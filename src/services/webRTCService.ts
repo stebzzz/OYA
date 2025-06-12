@@ -122,37 +122,92 @@ export class WebRTCService {
    */
   async addLocalStream(constraints: MediaStreamConstraints = { video: true, audio: true }): Promise<MediaStream> {
     try {
-      this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('🎬 Demande d\'accès média avec contraintes:', constraints);
+      
+      // Vérifier la disponibilité des médias
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('getUserMedia non supporté par ce navigateur');
+      }
+      
+      // Essayer d'abord avec les contraintes demandées
+      try {
+        this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (error) {
+        console.warn('⚠️ Échec avec contraintes complètes, essai avec contraintes réduites:', error);
+        // Fallback: essayer avec des contraintes plus simples
+        this.localStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: 640, height: 480 }, 
+          audio: true 
+        });
+      }
+      
+      if (!this.localStream) {
+        throw new Error('Impossible d\'obtenir le stream média');
+      }
+      
+      console.log('✅ Stream média obtenu:', {
+        streamId: this.localStream.id,
+        tracks: this.localStream.getTracks().length,
+        videoTracks: this.localStream.getVideoTracks().length,
+        audioTracks: this.localStream.getAudioTracks().length,
+        active: this.localStream.active
+      });
+      
+      // Vérifier chaque track individuellement
+      this.localStream.getTracks().forEach((track, index) => {
+        console.log(`🎵 Track ${index}:`, {
+          kind: track.kind,
+          enabled: track.enabled,
+          readyState: track.readyState,
+          label: track.label,
+          muted: track.muted,
+          settings: track.getSettings()
+        });
+      });
       
       if (this.peerConnection) {
+        // Vérifier l'état de la peer connection avant d'ajouter les tracks
+        console.log('🔗 État PeerConnection avant ajout tracks:', this.peerConnection.connectionState);
+        
         // Ajouter chaque track du stream local
         this.localStream.getTracks().forEach(track => {
-          console.log('🎵 Ajout track:', {
+          console.log('➕ Ajout track à PeerConnection:', {
             kind: track.kind,
             enabled: track.enabled,
-            readyState: track.readyState,
-            label: track.label
+            readyState: track.readyState
           });
-          this.peerConnection!.addTrack(track, this.localStream!);
+          
+          const sender = this.peerConnection!.addTrack(track, this.localStream!);
+          console.log('📡 Sender créé:', {
+            track: sender.track?.kind,
+            dtmf: sender.dtmf !== null
+          });
         });
         
-        // Vérifier les senders
+        // Vérifier les senders après ajout
         const senders = this.peerConnection.getSenders();
-        console.log('📡 Senders actifs:', senders.length);
+        console.log('📡 Total senders actifs:', senders.length);
         senders.forEach((sender, index) => {
           console.log(`📡 Sender ${index}:`, {
             track: sender.track?.kind,
-            enabled: sender.track?.enabled
+            enabled: sender.track?.enabled,
+            readyState: sender.track?.readyState
+          });
+        });
+        
+        // Vérifier les transceivers
+        const transceivers = this.peerConnection.getTransceivers();
+        console.log('🔄 Transceivers:', transceivers.length);
+        transceivers.forEach((transceiver, index) => {
+          console.log(`🔄 Transceiver ${index}:`, {
+            direction: transceiver.direction,
+            currentDirection: transceiver.currentDirection,
+            sender: transceiver.sender.track?.kind,
+            receiver: transceiver.receiver.track?.kind
           });
         });
       }
       
-      console.log('✅ Stream local ajouté:', {
-        streamId: this.localStream.id,
-        tracks: this.localStream.getTracks().length,
-        videoTracks: this.localStream.getVideoTracks().length,
-        audioTracks: this.localStream.getAudioTracks().length
-      });
       return this.localStream;
     } catch (error) {
       console.error('❌ Erreur ajout stream local:', error);
