@@ -54,23 +54,46 @@ export class WebRTCSignalingService {
     userType: 'recruiter' | 'candidate',
     onData: (data: SignalingData) => void
   ): () => void {
+    console.log('👂 Démarrage écoute signalisation pour session:', sessionId, 'en tant que:', userType);
+    
     const q = collection(db, this.COLLECTION_NAME);
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log('📬 Changements détectés dans la signalisation:', snapshot.docChanges().length, 'changements');
+      
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
           const data = { id: change.doc.id, ...change.doc.data() } as SignalingData;
           
+          console.log('🔍 Message reçu:', {
+            id: data.id,
+            sessionId: data.sessionId,
+            type: data.type,
+            from: data.from,
+            to: data.to,
+            processed: data.processed,
+            targetSession: sessionId,
+            targetUser: userType
+          });
+          
           // Filtrer les messages pour cette session et destinés à cet utilisateur
           if (data.sessionId === sessionId && data.to === userType && !data.processed) {
-            console.log('📨 Données de signalisation reçues:', data.type, 'de', data.from);
+            console.log('✅ Message valide reçu:', data.type, 'de', data.from, 'vers', data.to);
             onData(data);
             
             // Marquer comme traité
             this.markAsProcessed(data.id!);
+          } else {
+            console.log('❌ Message filtré:', {
+              sessionMatch: data.sessionId === sessionId,
+              userMatch: data.to === userType,
+              notProcessed: !data.processed
+            });
           }
         }
       });
+    }, (error) => {
+      console.error('❌ Erreur écoute signalisation:', error);
     });
 
     return unsubscribe;

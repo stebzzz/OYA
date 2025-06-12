@@ -280,27 +280,61 @@ Génère un résumé structuré de cet entretien.`;
   }
 
   private async makeAPICall(messages: PerplexityMessage[]): Promise<string> {
-    const response = await fetch(this.apiUrl, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'content-type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`
-      },
-      body: JSON.stringify({
+    console.log('🌐 Appel API Perplexity avec', messages.length, 'messages');
+    
+    try {
+      const requestBody = {
         model: 'sonar-pro',
         messages: messages,
         temperature: 0.1,
         max_tokens: 2000
-      })
-    });
+      };
+      
+      console.log('📤 Requête API:', {
+        url: this.apiUrl,
+        model: requestBody.model,
+        messagesCount: messages.length,
+        hasApiKey: !!this.apiKey
+      });
+      
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'content-type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`
+        },
+        body: JSON.stringify(requestBody)
+      });
 
-    if (!response.ok) {
-      throw new Error(`Erreur API Perplexity: ${response.status} - ${response.statusText}`);
+      console.log('📥 Réponse API status:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Erreur API détaillée:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorBody: errorText
+        });
+        throw new Error(`Erreur API Perplexity: ${response.status} - ${response.statusText}. Détails: ${errorText}`);
+      }
+
+      const data: PerplexityResponse = await response.json();
+      console.log('✅ Réponse API reçue:', {
+        hasChoices: !!data.choices,
+        choicesLength: data.choices?.length,
+        hasContent: !!data.choices?.[0]?.message?.content
+      });
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        throw new Error('Réponse API invalide: structure inattendue');
+      }
+      
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('❌ Erreur dans makeAPICall:', error);
+      throw error;
     }
-
-    const data: PerplexityResponse = await response.json();
-    return data.choices[0].message.content;
   }
 
   private parseJSONResponse(content: string): any {
