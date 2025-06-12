@@ -61,10 +61,30 @@ const InterviewJoin: React.FC = () => {
   const initializeWebRTC = () => {
     const callbacks: WebRTCCallbacks = {
       onRemoteStream: (stream) => {
-        console.log('📺 Stream distant reçu dans InterviewJoin');
+        console.log('📺 Stream distant reçu dans InterviewJoin:', {
+          streamId: stream.id,
+          tracks: stream.getTracks().length,
+          videoTracks: stream.getVideoTracks().length,
+          audioTracks: stream.getAudioTracks().length
+        });
         setRemoteStream(stream);
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = stream;
+          
+          // Forcer la lecture
+          remoteVideoRef.current.play().catch(error => {
+            console.error('❌ Erreur lecture vidéo distante:', error);
+          });
+          
+          // Vérifier les tracks
+          stream.getTracks().forEach((track, index) => {
+            console.log(`🎵 Track distant ${index}:`, {
+              kind: track.kind,
+              enabled: track.enabled,
+              readyState: track.readyState,
+              muted: track.muted
+            });
+          });
         }
       },
       onConnectionStateChange: (state) => {
@@ -497,6 +517,8 @@ const InterviewJoin: React.FC = () => {
               <video
                 ref={remoteVideoRef}
                 autoPlay
+                playsInline
+                muted={false}
                 className="max-w-full max-h-full object-cover"
               />
             ) : (

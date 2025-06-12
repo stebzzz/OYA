@@ -69,7 +69,27 @@ export class WebRTCService {
 
     // Réception du stream distant
     this.peerConnection.ontrack = (event) => {
-      console.log('📺 Stream distant reçu:', event.streams[0]);
+      console.log('📺 Stream distant reçu:', {
+        streamId: event.streams[0]?.id,
+        tracks: event.streams[0]?.getTracks().length,
+        videoTracks: event.streams[0]?.getVideoTracks().length,
+        audioTracks: event.streams[0]?.getAudioTracks().length,
+        trackKind: event.track.kind,
+        trackEnabled: event.track.enabled,
+        trackReadyState: event.track.readyState
+      });
+      
+      // Vérifier les receivers
+      const receivers = this.peerConnection?.getReceivers() || [];
+      console.log('📥 Receivers actifs:', receivers.length);
+      receivers.forEach((receiver, index) => {
+        console.log(`📥 Receiver ${index}:`, {
+          track: receiver.track?.kind,
+          enabled: receiver.track?.enabled,
+          readyState: receiver.track?.readyState
+        });
+      });
+      
       this.callbacks.onRemoteStream?.(event.streams[0]);
     };
 
@@ -107,11 +127,32 @@ export class WebRTCService {
       if (this.peerConnection) {
         // Ajouter chaque track du stream local
         this.localStream.getTracks().forEach(track => {
+          console.log('🎵 Ajout track:', {
+            kind: track.kind,
+            enabled: track.enabled,
+            readyState: track.readyState,
+            label: track.label
+          });
           this.peerConnection!.addTrack(track, this.localStream!);
+        });
+        
+        // Vérifier les senders
+        const senders = this.peerConnection.getSenders();
+        console.log('📡 Senders actifs:', senders.length);
+        senders.forEach((sender, index) => {
+          console.log(`📡 Sender ${index}:`, {
+            track: sender.track?.kind,
+            enabled: sender.track?.enabled
+          });
         });
       }
       
-      console.log('✅ Stream local ajouté:', this.localStream);
+      console.log('✅ Stream local ajouté:', {
+        streamId: this.localStream.id,
+        tracks: this.localStream.getTracks().length,
+        videoTracks: this.localStream.getVideoTracks().length,
+        audioTracks: this.localStream.getAudioTracks().length
+      });
       return this.localStream;
     } catch (error) {
       console.error('❌ Erreur ajout stream local:', error);
@@ -361,6 +402,19 @@ export class WebRTCService {
       }
 
       if (this.isInitiator) {
+        // Vérifier que les tracks sont bien ajoutés
+        const senders = this.peerConnection.getSenders();
+        console.log('🔍 Vérification avant création offre:', {
+          sendersCount: senders.length,
+          localStreamTracks: this.localStream?.getTracks().length || 0,
+          hasVideoTrack: senders.some(s => s.track?.kind === 'video'),
+          hasAudioTrack: senders.some(s => s.track?.kind === 'audio')
+        });
+        
+        if (senders.length === 0) {
+          console.warn('⚠️ Aucun sender trouvé, les tracks ne sont peut-être pas ajoutés');
+        }
+        
         // Le recruteur crée l'offre
         const offer = await this.peerConnection.createOffer({
           offerToReceiveAudio: true,
@@ -368,6 +422,13 @@ export class WebRTCService {
         });
         
         await this.peerConnection.setLocalDescription(offer);
+        
+        console.log('📋 Offre créée:', {
+          type: offer.type,
+          sdpLength: offer.sdp?.length,
+          hasVideo: offer.sdp?.includes('m=video'),
+          hasAudio: offer.sdp?.includes('m=audio')
+        });
         
         // Envoyer l'offre via la signalisation
         const userType = this.isInitiator ? 'recruiter' : 'candidate';
