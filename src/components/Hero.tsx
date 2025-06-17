@@ -9,12 +9,12 @@ const Hero: React.FC = () => {
           {/* Left Column */}
           <div>
             <div className="inline-flex items-center px-4 py-2 bg-[#9b6bff]/10 rounded-full text-[#9b6bff] font-medium text-sm mb-6">
-              🌐 Plateforme stratégique nouvelle génération
+              🌐 Plateforme stratégique
             </div>
             
             <h1 className="text-4xl lg:text-6xl font-bold text-[#223049] leading-tight mb-6">
-              La plateforme stratégique de 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff]">recrutement nouvelle génération</span>
+              La plateforme stratégique de  
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff]"> recrutement nouvelle génération</span>
             </h1>
             
             <p className="text-xl text-gray-600 mb-4 leading-relaxed">
