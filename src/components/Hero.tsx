@@ -17,9 +17,6 @@ const Hero: React.FC = () => {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff]"> recrutement nouvelle génération</span>
             </h1>
             
-            <p className="text-xl text-gray-600 mb-4 leading-relaxed">
-              100% autonome et boostée par l'IA
-            </p>
             
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               🧠 <strong>De l'annonce à l'embauche, en quelques heures.</strong><br/>
