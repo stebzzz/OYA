@@ -36,14 +36,14 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-white">
+    <section className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-amber-50 via-stone-50 to-white">
       {/* Animated background elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white">
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-100/30 via-stone-100/20 to-white/50">
         {/* Floating particles */}
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className={`absolute w-2 h-2 bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff] rounded-full opacity-20 animate-float-${i % 3}`}
+            className={`absolute w-2 h-2 bg-gradient-to-r from-amber-400 via-[#ff6a3d] to-[#9b6bff] rounded-full opacity-25 animate-float-${i % 3}`}
             style={{
               left: `${10 + i * 12}%`,
               top: `${20 + (i % 3) * 25}%`,
@@ -54,9 +54,11 @@ const Hero: React.FC = () => {
         ))}
         
         {/* Geometric shapes */}
-        <div className="absolute top-20 left-10 w-20 h-20 border-2 border-[#ff6a3d]/20 rounded-full animate-spin-slow" />
-        <div className="absolute bottom-32 right-16 w-16 h-16 bg-[#9b6bff]/10 rotate-45 animate-pulse" />
-        <div className="absolute top-1/3 right-20 w-12 h-12 border-2 border-[#9b6bff]/20 animate-bounce-slow" />
+        <div className="absolute top-20 left-10 w-20 h-20 border-2 border-amber-300/30 rounded-full animate-spin-slow" />
+        <div className="absolute bottom-32 right-16 w-16 h-16 bg-gradient-to-br from-amber-200/20 to-[#9b6bff]/10 rotate-45 animate-pulse" />
+        <div className="absolute top-1/3 right-20 w-12 h-12 border-2 border-stone-300/40 animate-bounce-slow" />
+        <div className="absolute top-10 right-1/4 w-8 h-8 bg-amber-100/30 rounded-full animate-float-1" />
+        <div className="absolute bottom-20 left-1/4 w-6 h-6 border border-amber-200/50 rotate-12 animate-bounce-gentle" />
       </div>
 
       {/* Main content */}
@@ -65,7 +67,7 @@ const Hero: React.FC = () => {
         <div className={`transform transition-all duration-1000 ${animationStep >= 1 ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-12 opacity-0 scale-95'}`}>
           <div className="relative inline-block">
             <h1 className="text-5xl lg:text-7xl xl:text-8xl font-black leading-tight text-[#223049] mb-8 relative z-10">
-              <span className="inline-block animate-gradient-shift bg-gradient-to-r from-[#223049] via-[#ff6a3d] to-[#9b6bff] bg-clip-text text-transparent bg-300% hover:scale-110 transition-transform duration-300">
+              <span className="inline-block animate-gradient-shift bg-gradient-to-r from-amber-600 via-[#ff6a3d] via-[#223049] to-[#9b6bff] bg-clip-text text-transparent bg-300% hover:scale-110 transition-transform duration-300">
                 OYA
               </span>
             </h1>
@@ -80,7 +82,7 @@ const Hero: React.FC = () => {
           <p className="text-2xl lg:text-4xl font-bold text-[#223049] mb-4 animate-slide-up">
             LA RÉVOLUTION DU RECRUTEMENT
           </p>
-          <p className={`text-xl lg:text-2xl font-semibold bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff] bg-clip-text text-transparent animate-gradient-shift ${animationStep >= 2 ? 'animate-typewriter' : ''}`}>
+          <p className={`text-xl lg:text-2xl font-semibold bg-gradient-to-r from-amber-600 via-[#ff6a3d] to-[#9b6bff] bg-clip-text text-transparent animate-gradient-shift ${animationStep >= 2 ? 'animate-typewriter' : ''}`}>
             Intelligence Artificielle • Automatisation • Résultats
           </p>
         </div>
