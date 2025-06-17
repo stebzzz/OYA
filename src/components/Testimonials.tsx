@@ -4,22 +4,23 @@ import { Star, Quote } from 'lucide-react';
 const Testimonials: React.FC = () => {
   const testimonials = [
     {
+      name: "Directeur réseau RH",
+      position: "Directeur réseau RH",
+      company: "Groupe recrutement (confidentiel)",
+      avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?w=100&h=100&fit=crop&crop=face",
+      quote: "En moins d'une semaine, Oya avait remplacé notre process complet, augmenté notre productivité et amélioré la qualité de nos recrutements. On ne reviendra jamais en arrière.",
+      rating: 5,
+      results: "🧪 Testé. Approuvé. En production",
+      badge: "Avis vérifié"
+    },
+    {
       name: "Marie Dubois",
       position: "DRH",
       company: "TechCorp (250 salariés)",
-      avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?w=100&h=100&fit=crop&crop=face",
+      avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?w=100&h=100&fit=crop&crop=face",
       quote: "OYA a révolutionné notre processus de recrutement. Nous avons économisé 180k€ la première année en supprimant les cabinets.",
       rating: 5,
       results: "180k€ économisés, -60% temps RH"
-    },
-    {
-      name: "Thomas Martin",
-      position: "Directeur Général",
-      company: "InnovateTech (150 salariés)",
-      avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?w=100&h=100&fit=crop&crop=face",
-      quote: "L'IA d'OYA trouve des candidats que nous n'aurions jamais identifiés. Le scoring est d'une précision remarquable.",
-      rating: 5,
-      results: "92% taux de matching, +40% qualité candidats"
     },
     {
       name: "Sophie Laurent",
@@ -38,7 +39,7 @@ const Testimonials: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center px-4 py-2 bg-[#9b6bff]/10 rounded-full text-[#9b6bff] font-medium text-sm mb-6">
-            ⭐ Témoignages clients
+            🧪 Testé. Approuvé. En production
           </div>
           
           <h2 className="text-4xl lg:text-5xl font-bold text-[#223049] mb-6">
@@ -50,11 +51,53 @@ const Testimonials: React.FC = () => {
             éliminer les coûts cachés, et automatiser intelligemment sans sacrifier la qualité humaine.
           </p>
         </div>
+        
+        {/* Professional Standards Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center px-4 py-2 bg-blue-500/10 rounded-full text-blue-600 font-medium text-sm mb-6">
+            💼 Oya, le standard pro des grands comptes
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
+            <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+              <div className="text-2xl mb-3">🎓</div>
+              <h4 className="font-semibold text-[#223049] mb-2">Formation rapide</h4>
+              <p className="text-gray-600 text-sm">prise en main en moins de 2h</p>
+            </div>
+            <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+              <div className="text-2xl mb-3">📞</div>
+              <h4 className="font-semibold text-[#223049] mb-2">Support client réactif</h4>
+              <p className="text-gray-600 text-sm">basé à Toulouse</p>
+            </div>
+            <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+              <div className="text-2xl mb-3">🔌</div>
+              <h4 className="font-semibold text-[#223049] mb-2">Intégration possible</h4>
+              <p className="text-gray-600 text-sm">à vos outils si besoin (SIRH, CRM, ERP)</p>
+            </div>
+            <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+              <div className="text-2xl mb-3">🧩</div>
+              <h4 className="font-semibold text-[#223049] mb-2">Roadmap IA continue</h4>
+              <p className="text-gray-600 text-sm">nouvelles features mensuelles</p>
+            </div>
+            <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100">
+              <div className="text-2xl mb-3">🔐</div>
+              <h4 className="font-semibold text-[#223049] mb-2">Sécurité, conformité</h4>
+              <p className="text-gray-600 text-sm">performance</p>
+            </div>
+          </div>
+        </div>
 
         {/* Testimonials Grid */}
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
+            <div key={index} className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 relative">
+              {/* Badge for first testimonial */}
+              {testimonial.badge && (
+                <div className="absolute -top-3 -right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  {testimonial.badge}
+                </div>
+              )}
+              
               {/* Quote Icon */}
               <Quote className="text-[#ff6a3d] mb-4" size={32} />
               

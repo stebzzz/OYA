@@ -19,13 +19,12 @@ const Footer: React.FC = () => {
             </div>
             
             <p className="text-gray-300 mb-6 max-w-md">
-              La plateforme IA stratégique qui transforme le recrutement en entreprise. 
-              Supprimez les intermédiaires, automatisez intelligemment, gardez le contrôle.
+              La plateforme stratégique de recrutement nouvelle génération, 100% autonome et boostée par l'IA.
             </p>
             
             <div className="text-sm text-gray-400">
               <p className="font-semibold text-[#ff6a3d] mb-2">
-                Simplifier • Accélérer • Performer
+                🔐 Plateforme 100% conforme RGPD – Hébergement souverain
               </p>
             </div>
           </div>
@@ -39,34 +38,27 @@ const Footer: React.FC = () => {
                 <span className="text-gray-300">contact@oya-intelligence.com</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone size={16} className="text-[#ff6a3d]" />
-                <span className="text-gray-300">+33 1 23 45 67 89</span>
-              </div>
-              <div className="flex items-center space-x-3">
                 <MapPin size={16} className="text-[#ff6a3d]" />
-                <span className="text-gray-300">Paris, France</span>
+                <span className="text-gray-300">📍 Toulouse, France</span>
               </div>
             </div>
           </div>
 
           {/* CTA */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Démarrer maintenant</h4>
+            <h4 className="text-lg font-semibold mb-6">📆 Demandez votre démonstration</h4>
             <div className="space-y-4">
               <button className="w-full bg-[#ff6a3d] text-white px-6 py-3 rounded-lg hover:bg-[#ff6a3d]/90 transition-colors">
-                Demander une démo
+                🟢 Réserver une démo
               </button>
               <button className="w-full border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#223049] transition-colors">
-                Calculer mon ROI
+                🟢 Voir le logiciel en action
               </button>
             </div>
             
             <div className="flex space-x-4 mt-6">
               <a href="#" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
                 <LinkedIn size={20} />
-              </a>
-              <a href="#" className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
-                <Twitter size={20} />
               </a>
             </div>
           </div>
@@ -78,9 +70,9 @@ const Footer: React.FC = () => {
             © 2024 OYA Intelligence. Tous droits réservés.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
+            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">🔗 LinkedIn</a>
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Mentions légales</a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">RGPD</a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">CGU</a>
+            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Politique de confidentialité</a>
           </div>
         </div>
       </div>

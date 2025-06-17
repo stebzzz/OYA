@@ -450,7 +450,16 @@ export class WebRTCService {
         });
       });
 
-      const answer = await this.createAnswer();
+      // Créer la réponse sans refaire setRemoteDescription
+      const answer = await this.peerConnection.createAnswer();
+      await this.peerConnection.setLocalDescription(answer);
+      
+      console.log('📤 Réponse créée:', {
+        type: answer.type,
+        sdpLength: answer.sdp?.length,
+        hasVideo: answer.sdp?.includes('m=video'),
+        hasAudio: answer.sdp?.includes('m=audio')
+      });
        
        // Envoyer la réponse via la signalisation
        const userType = this.callbacks.getUserType?.() || 'candidate';

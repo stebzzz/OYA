@@ -24,7 +24,7 @@ const Header: React.FC = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-[#223049] hover:text-[#ff6a3d] transition-colors">Fonctionnalités</a>
             <a href="#roi" className="text-[#223049] hover:text-[#ff6a3d] transition-colors">ROI</a>
-            <a href="#pricing" className="text-[#223049] hover:text-[#ff6a3d] transition-colors">Tarifs</a>
+
             <a href="#contact" className="text-[#223049] hover:text-[#ff6a3d] transition-colors">Contact</a>
             <Link 
               to="/auth"
@@ -49,7 +49,7 @@ const Header: React.FC = () => {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
               <a href="#features" className="block px-3 py-2 text-[#223049] hover:text-[#ff6a3d]">Fonctionnalités</a>
               <a href="#roi" className="block px-3 py-2 text-[#223049] hover:text-[#ff6a3d]">ROI</a>
-              <a href="#pricing" className="block px-3 py-2 text-[#223049] hover:text-[#ff6a3d]">Tarifs</a>
+
               <a href="#contact" className="block px-3 py-2 text-[#223049] hover:text-[#ff6a3d]">Contact</a>
               <Link 
                 to="/auth"
