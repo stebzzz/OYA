@@ -39,9 +39,9 @@ const Hero: React.FC = () => {
             <div className="bg-gradient-to-r from-[#ff6a3d]/10 to-[#9b6bff]/10 p-6 rounded-xl mb-6">
               <p className="text-sm font-semibold text-[#223049] mb-2">📍 Conçu pour :</p>
               <div className="grid grid-cols-1 gap-2 text-sm text-gray-700">
-                <span>• Cabinets, agences et groupes RH exigeants</span>
-                <span>• Entreprises à fort volume de recrutement</span>
-                <span>• Remplace totalement l'empilement ATS + jobboards + Teams + CRM</span>
+                <span>Cabinets, agences et groupes RH exigeants</span>
+                <span>Entreprises à fort volume de recrutement</span>
+                <span>Remplace totalement l'empilement ATS + jobboards + Teams + CRM</span>
               </div>
             </div>
 

@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import ROICalculator from '../components/ROICalculator';
-import Testimonials from '../components/Testimonials';
+
 
 import Footer from '../components/Footer';
 
@@ -15,7 +15,7 @@ const LandingPage: React.FC = () => {
       <Hero />
       <Features />
       <ROICalculator />
-      <Testimonials />
+
 
       <Footer />
     </div>
