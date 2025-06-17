@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold">oya</h3>
-                <p className="text-sm opacity-75">intelligence</p>
+                <p className="text-sm opacity-75">intelligencee</p>
               </div>
             </div>
             
