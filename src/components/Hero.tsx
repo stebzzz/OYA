@@ -25,13 +25,13 @@ const Hero: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <button className="bg-[#ff6a3d] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#ff6a3d]/90 transition-all transform hover:scale-105 flex items-center justify-center space-x-2">
-                <span>🟢 Réserver une démo</span>
+                <span>Réserver une démo</span>
                 <ArrowRight size={20} />
               </button>
               
               <button className="border-2 border-[#223049] text-[#223049] px-8 py-4 rounded-lg font-semibold hover:bg-[#223049] hover:text-white transition-all flex items-center justify-center space-x-2">
                 <Play size={20} />
-                <span>🟢 Voir le logiciel en action</span>
+                <span>Voir le logiciel en action</span>
               </button>
             </div>
 
