@@ -49,10 +49,10 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-6">📆 Demandez votre démonstration</h4>
             <div className="space-y-4">
               <button className="w-full bg-[#ff6a3d] text-white px-6 py-3 rounded-lg hover:bg-[#ff6a3d]/90 transition-colors">
-                🟢 Réserver une démo
+                Réserver une démo
               </button>
               <button className="w-full border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#223049] transition-colors">
-                🟢 Voir le logiciel en action
+                Voir le logiciel en action
               </button>
             </div>
             

@@ -237,10 +237,10 @@ const Features: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-[#ff6a3d] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#ff6a3d]/90 transition-all transform hover:scale-105">
-                🟢 Réserver une démo
+                Réserver une démo
               </button>
               <button className="bg-white text-[#223049] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all">
-                🟢 Voir le logiciel en action
+                Voir le logiciel en action
               </button>
             </div>
           </div>
