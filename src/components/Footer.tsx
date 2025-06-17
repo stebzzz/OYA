@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin size={16} className="text-[#ff6a3d]" />
-                <span className="text-gray-300">Toulouse, France</span>
+                <span className="text-gray-300">📍 Toulouse, France</span>
               </div>
             </div>
           </div>

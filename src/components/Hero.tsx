@@ -1,31 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { Play, ArrowRight, CheckCircle, ChevronDown, Sparkles, Zap } from 'lucide-react';
+import { Play, ArrowRight, CheckCircle, ChevronDown, Zap, Star, Sparkles } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [animationStep, setAnimationStep] = useState(0);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [particles, setParticles] = useState<Array<{id: number, x: number, y: number, size: number, color: string, speed: number}>>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 300);
+    }, 500);
     
-    // Cascade animation steps
-    const steps = [
-      () => setAnimationStep(1), // Title
-      () => setAnimationStep(2), // Subtitle
-      () => setAnimationStep(3), // Description
-      () => setAnimationStep(4), // Buttons
-      () => setAnimationStep(5), // Scroll indicator
-    ];
+    const scrollTimer = setTimeout(() => {
+      setShowScrollIndicator(true);
+    }, 3000);
     
-    steps.forEach((step, index) => {
-      setTimeout(step, 500 + index * 200);
-    });
+    // Generate random particles
+    const newParticles = Array.from({ length: 50 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 4 + 1,
+      color: Math.random() > 0.5 ? '#ff6a3d' : '#9b6bff',
+      speed: Math.random() * 2 + 1
+    }));
+    setParticles(newParticles);
     
     return () => {
       clearTimeout(timer);
+      clearTimeout(scrollTimer);
     };
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   const scrollToContent = () => {
@@ -36,6 +53,7 @@ const Hero: React.FC = () => {
   };
 
   return (
+<<<<<<< HEAD
     <section className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-amber-50 via-stone-50 to-white">
       {/* Animated background elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-amber-100/30 via-stone-100/20 to-white/50">
@@ -44,15 +62,49 @@ const Hero: React.FC = () => {
           <div
             key={i}
             className={`absolute w-2 h-2 bg-gradient-to-r from-amber-400 via-[#ff6a3d] to-[#9b6bff] rounded-full opacity-25 animate-float-${i % 3}`}
+=======
+    <section className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-black">
+      {/* Dynamic background with 3D effect */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Animated mesh gradient */}
+        <div 
+          className="absolute inset-0 opacity-80"
+          style={{
+            background: `
+              radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, #ff6a3d 0%, transparent 50%),
+              radial-gradient(circle at ${100 - mousePosition.x}% ${100 - mousePosition.y}%, #9b6bff 0%, transparent 50%),
+              linear-gradient(45deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)
+            `
+          }}
+        />
+        
+        {/* Floating geometric shapes */}
+        <div className="absolute top-10 left-10 w-32 h-32 border border-[#ff6a3d]/30 rotate-45 animate-spin" style={{animationDuration: '20s'}}></div>
+        <div className="absolute top-20 right-20 w-24 h-24 border border-[#9b6bff]/30 rotate-12 animate-pulse"></div>
+        <div className="absolute bottom-20 left-20 w-40 h-40 border border-[#ff6a3d]/20 rounded-full animate-ping" style={{animationDuration: '4s'}}></div>
+        <div className="absolute bottom-10 right-10 w-28 h-28 border border-[#9b6bff]/20 rotate-45 animate-bounce" style={{animationDuration: '3s'}}></div>
+        
+        {/* Particle system */}
+        {particles.map((particle) => (
+          <div
+            key={particle.id}
+            className="absolute rounded-full animate-float"
+>>>>>>> parent of 9cac95e (push edit)
             style={{
-              left: `${10 + i * 12}%`,
-              top: `${20 + (i % 3) * 25}%`,
-              animationDelay: `${i * 0.5}s`,
-              animationDuration: `${3 + (i % 2)}s`
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              backgroundColor: particle.color,
+              animationDuration: `${particle.speed}s`,
+              animationDelay: `${particle.id * 0.1}s`,
+              filter: 'blur(0.5px)',
+              boxShadow: `0 0 ${particle.size * 2}px ${particle.color}`
             }}
           />
         ))}
         
+<<<<<<< HEAD
         {/* Geometric shapes */}
         <div className="absolute top-20 left-10 w-20 h-20 border-2 border-amber-300/30 rounded-full animate-spin-slow" />
         <div className="absolute bottom-32 right-16 w-16 h-16 bg-gradient-to-br from-amber-200/20 to-[#9b6bff]/10 rotate-45 animate-pulse" />
@@ -112,48 +164,116 @@ const Hero: React.FC = () => {
               </span>
             </button>
           </div>
+=======
+        {/* Lightning effects */}
+        <div className="absolute top-1/4 left-1/4 animate-flash">
+          <Zap size={32} className="text-[#ff6a3d] drop-shadow-lg" />
+        </div>
+        <div className="absolute top-3/4 right-1/4 animate-flash" style={{animationDelay: '1s'}}>
+          <Star size={28} className="text-[#9b6bff] drop-shadow-lg" />
+        </div>
+        <div className="absolute top-1/2 left-1/6 animate-flash" style={{animationDelay: '2s'}}>
+          <Sparkles size={24} className="text-[#ff6a3d] drop-shadow-lg" />
+        </div>
+      </div>
+
+      {/* Main content with 3D transform */}
+      <div className="text-center px-4 z-10 relative">
+        <div className={`transform transition-all duration-2000 ${isVisible ? 'translate-y-0 scale-100 rotate-0' : 'translate-y-20 scale-75 rotate-3'}`}>
+          {/* Glowing title */}
+          <h1 className={`text-5xl lg:text-7xl xl:text-9xl font-black leading-tight transition-all duration-2000 transform perspective-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#ff6a3d] via-[#ffffff] to-[#9b6bff] animate-gradient-shift drop-shadow-2xl transform hover:scale-105 transition-transform duration-300">
+              OYA
+            </span>
+          </h1>
+          
+          {/* Subtitle with typewriter effect */}
+          <div className={`mt-8 transition-all duration-1500 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <p className="text-2xl lg:text-4xl xl:text-5xl font-bold text-white mb-4 animate-typewriter">
+              LA RÉVOLUTION
+            </p>
+            <p className="text-xl lg:text-3xl xl:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff] animate-pulse">
+              DU RECRUTEMENT
+            </p>
+          </div>
+          
+          {/* Glowing subtitle */}
+          <div className={`mt-12 transition-all duration-1500 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <p className="text-lg lg:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              <span className="text-[#ff6a3d] font-semibold">Intelligence Artificielle</span> • 
+              <span className="text-[#9b6bff] font-semibold">Automatisation Complète</span> • 
+              <span className="text-white font-semibold">Résultats Exceptionnels</span>
+            </p>
+          </div>
+        </div>
+        
+        {/* Call to action with neon effect */}
+        <div className={`mt-16 transition-all duration-1500 delay-1500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <button className="group relative px-12 py-6 bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff] rounded-full text-white font-bold text-xl hover:scale-110 transition-all duration-300 shadow-2xl hover:shadow-[#ff6a3d]/50 animate-pulse-slow">
+            <span className="relative z-10 flex items-center space-x-3">
+              <span>DÉCOUVRIR LA MAGIE</span>
+              <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff] rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
+          </button>
+>>>>>>> parent of 9cac95e (push edit)
         </div>
       </div>
 
       {/* Enhanced scroll indicator */}
-      <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-all duration-1000 delay-800 ${animationStep >= 5 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+      <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-all duration-2000 delay-2000 ${showScrollIndicator ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         <button 
           onClick={scrollToContent}
-          className="flex flex-col items-center space-y-2 text-gray-600 hover:text-[#ff6a3d] transition-all group cursor-pointer animate-bounce-gentle"
+          className="flex flex-col items-center space-y-4 text-white hover:text-[#ff6a3d] transition-all group cursor-pointer transform hover:scale-110"
         >
-          <span className="text-sm font-medium group-hover:scale-110 transition-transform">Découvrir</span>
           <div className="relative">
-            <ChevronDown size={24} className="animate-bounce group-hover:animate-pulse" />
-            <div className="absolute inset-0 bg-[#ff6a3d]/20 rounded-full scale-0 group-hover:scale-150 transition-transform duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#ff6a3d] to-[#9b6bff] rounded-full blur-lg opacity-50 animate-pulse"></div>
+            <div className="relative bg-black/50 backdrop-blur-sm rounded-full p-4 border border-white/20">
+              <span className="text-sm font-bold tracking-wider">EXPLORER</span>
+            </div>
+          </div>
+          <div className="animate-bounce-slow">
+            <ChevronDown size={32} className="group-hover:scale-125 transition-transform drop-shadow-lg" />
           </div>
         </button>
       </div>
-      
+
       {/* Custom animations */}
       <style jsx>{`
         @keyframes gradient-shift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%, 100% {
+            background-size: 300% 300%;
+            background-position: 0% 50%;
+          }
+          25% {
+            background-size: 300% 300%;
+            background-position: 100% 50%;
+          }
+          50% {
+            background-size: 300% 300%;
+            background-position: 50% 100%;
+          }
+          75% {
+            background-size: 300% 300%;
+            background-position: 50% 0%;
+          }
         }
         
-        @keyframes float-0 {
+        @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(180deg); }
+          25% { transform: translateY(-20px) rotate(90deg); }
+          50% { transform: translateY(-40px) rotate(180deg); }
+          75% { transform: translateY(-20px) rotate(270deg); }
         }
         
-        @keyframes float-1 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-15px) rotate(-180deg); }
+        @keyframes flash {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
         }
         
-        @keyframes float-2 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-25px) rotate(90deg); }
-        }
-        
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+        @keyframes typewriter {
+          0% { width: 0; }
+          100% { width: 100%; }
         }
         
         @keyframes bounce-slow {
@@ -161,80 +281,39 @@ const Hero: React.FC = () => {
           50% { transform: translateY(-10px); }
         }
         
-        @keyframes bounce-gentle {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(255, 106, 61, 0.3); }
-          50% { box-shadow: 0 0 30px rgba(255, 106, 61, 0.5); }
-        }
-        
-        @keyframes slide-up {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes fade-in-up {
-          from { transform: translateY(30px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes typewriter {
-          from { width: 0; }
-          to { width: 100%; }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.8; }
         }
         
         .animate-gradient-shift {
-          animation: gradient-shift 3s ease-in-out infinite;
-          background-size: 300% 300%;
+          animation: gradient-shift 4s ease-in-out infinite;
         }
         
-        .animate-float-0 {
-          animation: float-0 4s ease-in-out infinite;
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
         }
         
-        .animate-float-1 {
-          animation: float-1 3s ease-in-out infinite;
+        .animate-flash {
+          animation: flash 2s ease-in-out infinite;
         }
         
-        .animate-float-2 {
-          animation: float-2 5s ease-in-out infinite;
-        }
-        
-        .animate-spin-slow {
-          animation: spin-slow 20s linear infinite;
+        .animate-typewriter {
+          overflow: hidden;
+          white-space: nowrap;
+          animation: typewriter 2s steps(20) 1s both;
         }
         
         .animate-bounce-slow {
           animation: bounce-slow 3s ease-in-out infinite;
         }
         
-        .animate-bounce-gentle {
-          animation: bounce-gentle 2s ease-in-out infinite;
+        .animate-pulse-slow {
+          animation: pulse-slow 3s ease-in-out infinite;
         }
         
-        .animate-pulse-glow {
-          animation: pulse-glow 2s ease-in-out infinite;
-        }
-        
-        .animate-slide-up {
-          animation: slide-up 1s ease-out;
-        }
-        
-        .animate-fade-in-up {
-          animation: fade-in-up 1s ease-out;
-        }
-        
-        .animate-typewriter {
-          overflow: hidden;
-          white-space: nowrap;
-          animation: typewriter 2s steps(40, end);
-        }
-        
-        .bg-300% {
-          background-size: 300% 300%;
+        .perspective-1000 {
+          perspective: 1000px;
         }
       `}</style>
     </section>
