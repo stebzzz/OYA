@@ -3,7 +3,7 @@ import { Play, CheckCircle, ArrowRight, Target, Zap, Shield, TrendingUp, Users, 
 import Header from '../components/Header';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
-import ROICalculator from '../components/ROICalculator';
+
 
 
 import Footer from '../components/Footer';
@@ -14,7 +14,7 @@ const LandingPage: React.FC = () => {
       <Header />
       <Hero />
       <Features />
-      <ROICalculator />
+
 
 
       <Footer />
