@@ -67,12 +67,12 @@ const Footer: React.FC = () => {
         {/* Bottom */}
         <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 OYA Intelligence. Tous droits réservés.
+            © 2025 OYA Intelligence™️
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">🔗 LinkedIn</a>
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Mentions légales</a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Politique de confidentialité</a>
+            <span className="text-gray-400 text-sm">|</span>
+            <a href="mailto:contact@oya-intelligence.com" className="text-gray-400 hover:text-white text-sm transition-colors">Contact : contact@oya-intelligence.com</a>
           </div>
         </div>
       </div>
