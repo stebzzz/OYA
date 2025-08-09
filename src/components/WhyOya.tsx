@@ -28,17 +28,17 @@ const WhyOya: React.FC = () => {
 
   const features = [
     {
+      icon: Radio,
+      title: "📡 Multi-diffusion 1 clic",
+      description: "Publiez vos annonces sur plus de 20 plateformes en un seul clic. Centralisé. Rapide. Sans friction.",
+      color: "from-[#9b6bff] to-[#9b6bff]/80",
+      delay: "delay-100"
+    },
+    {
       icon: Search,
       title: "🔍 Matching IA intelligent",
       description: "Tri automatique des meilleurs profils selon les critères stratégiques réels de vos clients.",
       color: "from-[#ff6a3d] to-[#ff6a3d]/80",
-      delay: "delay-100"
-    },
-    {
-      icon: Radio,
-      title: "📡 Multi-diffusion 1 clic",
-      description: "Publiez vos annonces sur +20 plateformes en une seule action. Centralisé, rapide, sans friction.",
-      color: "from-[#9b6bff] to-[#9b6bff]/80",
       delay: "delay-200"
     },
     {
@@ -51,7 +51,7 @@ const WhyOya: React.FC = () => {
     {
       icon: BarChart3,
       title: "📊 CRM & KPI intégrés",
-      description: "Suivi temps réel des performances par mission, client, consultant. Décidez en connaissance.",
+      description: "Suivi en temps réel des performances par mission, client, consultant. Décidez en connaissance de cause.",
       color: "from-green-500 to-green-400",
       delay: "delay-400"
     }

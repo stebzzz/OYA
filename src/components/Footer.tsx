@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold">oya</h3>
-                <p className="text-sm opacity-75">intelligencee</p>
+                <p className="text-sm opacity-75">intelligence</p>
               </div>
             </div>
             
@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Mail size={16} className="text-[#ff6a3d]" />
-                <span className="text-gray-300">contact@oya-intelligence.com</span>
+                <span className="text-gray-300">contact@oyaintelligence.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin size={16} className="text-[#ff6a3d]" />
@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Mentions légales</a>
             <span className="text-gray-400 text-sm">|</span>
-            <a href="mailto:contact@oya-intelligence.com" className="text-gray-400 hover:text-white text-sm transition-colors">Contact : contact@oya-intelligence.com</a>
+            <a href="mailto:contact@oyaintelligence.com" className="text-gray-400 hover:text-white text-sm transition-colors">Contact : contact@oyaintelligence.com</a>
           </div>
         </div>
       </div>

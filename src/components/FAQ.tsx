@@ -42,15 +42,15 @@ const FAQ: React.FC = () => {
     },
     {
       question: "📚 Faut-il être formé ?",
-      answer: "L'interface est pensée pour être prise en main rapidement. Et l'onboarding est guidé."
+      answer: "L'interface a été pensée pour une prise en main rapide. L'onboarding est entièrement guidée."
     },
     {
       question: "💰 Combien ça coûte ?",
-      answer: "Frais d'intégration sur mesure, abonnement ajusté à votre taille, et commission évolutive au succès."
+      answer: "Des frais d'intégrations sur mesure, un abonnement adapté à votre structure et une commission qui évolue selon vos résultats."
     },
     {
       question: "🔒 Mes données sont-elles sécurisées ?",
-      answer: "100% hébergé en France, conforme RGPD by design. Nos experts cybersécurité veillent à la protection de vos données."
+      answer: "100% hébergé en France, conforme RGPD by design. Nos experts cybersécurité veillent à la protection de vos données avec des audits réguliers et une infrastructure sécurisée."
     },
     {
       question: "⚡ Combien de temps pour voir les premiers résultats ?",

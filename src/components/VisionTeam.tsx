@@ -30,7 +30,7 @@ const VisionTeam: React.FC = () => {
     {
       role: "CEO & stratégie",
       description: "Je m'occupe de la vision, du produit, du marketing et de l'accompagnement client.",
-      mission: "Mon obsession : créer une solution qui fait réellement gagner du temps et du chiffre à ceux qui recrutent chaque jour.",
+      mission: "Son obsession : créer une solution qui fait réellement gagner du temps et du chiffre à ceux qui recrutent chaque jour.",
       icon: Target,
       color: "from-[#ff6a3d] to-[#ff6a3d]/80"
     },
@@ -56,10 +56,10 @@ const VisionTeam: React.FC = () => {
         {/* Mission Section */}
         <div className="text-center mb-20">
           <div className={`transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <h2 className="text-4xl lg:text-5xl font-bold text-[#223049] mb-8">
-              🤝 Une mission simple :
+            <h2 className="text-4xl lg:text-5xl font-bold text-[#223049] mb-8 animate-pulse">
+              Une mission simple :
             </h2>
-            <p className="text-2xl lg:text-3xl text-[#ff6a3d] font-bold mb-8">
+            <p className="text-2xl lg:text-3xl text-[#ff6a3d] font-bold mb-8 transform hover:scale-105 transition-transform duration-300">
               Redonner du temps, du contrôle et de la qualité aux agences de recrutement.
             </p>
           </div>
@@ -136,12 +136,12 @@ const VisionTeam: React.FC = () => {
             <div className="flex items-center justify-center mb-6">
               <Heart className="text-[#ff6a3d] mr-3" size={40} />
               <h3 className="text-2xl lg:text-3xl font-bold text-white">
-                💡 Une approche humaine, une solution durable
+                Une approche humaine, une solution durable
               </h3>
             </div>
             
             <p className="text-xl text-gray-300 mb-6 max-w-4xl mx-auto leading-relaxed">
-              OYA Intelligence™️ n'est pas un outil "en plus" : c'est un levier stratégique conçu avec des recruteurs, pour des recruteurs.
+              OYA Intelligence™️ n'est pas un outil "en plus" : c'est un levier stratégique conçu par et pour des recruteurs.
             </p>
             
             <p className="text-lg text-gray-400 max-w-2xl mx-auto">
