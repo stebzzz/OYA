@@ -30,7 +30,7 @@ const VisionTeam: React.FC = () => {
     {
       role: "CEO & stratégie",
       description: "Je m'occupe de la vision, du produit, du marketing et de l'accompagnement client.",
-      mission: "Son obsession : créer une solution qui fait réellement gagner du temps et du chiffre à ceux qui recrutent chaque jour.",
+      mission: "Son obsession : créer des outils qui libèrent du temps pour ce qui compte vraiment - les relations humaines et la croissance de votre entreprise.",
       icon: Target,
       color: "from-[#ff6a3d] to-[#ff6a3d]/80"
     },

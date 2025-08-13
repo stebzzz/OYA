@@ -91,7 +91,7 @@ const ROISimulator: React.FC = () => {
         {/* Title */}
         <div className="text-center mb-16">
           <h2 className={`text-4xl lg:text-5xl font-bold text-[#223049] mb-6 transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            Estimez votre ROI en 15 secondes
+            Estimez votre ROI en 15sec
           </h2>
           <p className={`text-xl text-gray-600 max-w-3xl mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             Un outil simple pour comprendre l'impact concret d'OYA Intelligence™️ sur vos performances.

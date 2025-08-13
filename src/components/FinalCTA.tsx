@@ -99,13 +99,15 @@ const FinalCTA: React.FC = () => {
                 </div>
               </div>
               
-              <button className="group bg-gradient-to-r from-[#ff6a3d] to-[#ff6a3d]/90 text-white px-12 py-4 rounded-lg font-bold text-xl hover:from-[#ff6a3d]/90 hover:to-[#ff6a3d] transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-2xl hover:shadow-[#ff6a3d]/25">
-                <span className="flex items-center space-x-3">
-                  <Calendar className="group-hover:rotate-12 transition-transform" size={24} />
-                  <span>Réserver un créneau</span>
-                  <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
-                </span>
-              </button>
+              <a href="https://calendly.com/contact-oyaintelligence" target="_blank" rel="noopener noreferrer" className="inline-block">
+                <button className="group bg-gradient-to-r from-[#ff6a3d] to-[#ff6a3d]/90 text-white px-12 py-4 rounded-lg font-bold text-xl hover:from-[#ff6a3d]/90 hover:to-[#ff6a3d] transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-2xl hover:shadow-[#ff6a3d]/25">
+                  <span className="flex items-center space-x-3">
+                    <Calendar className="group-hover:rotate-12 transition-transform" size={24} />
+                    <span>Réserver un créneau</span>
+                    <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                  </span>
+                </button>
+              </a>
               
               <p className="text-gray-400 text-sm mt-4">
                 Disponibilités sous 48h • Échange en français • Équipe basée en France

@@ -51,14 +51,6 @@ const Hero: React.FC = () => {
       <div className="text-center px-4 z-10 relative max-w-6xl mx-auto">
         <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           {/* Main title */}
-          <h1 className="text-4xl lg:text-6xl xl:text-7xl font-black leading-tight mb-8">
-            <span className="block text-white mb-4">
-              Un poste de pilotage.
-            </span>
-            <span className="block text-white mb-4">
-              Pas un outil en plus.
-            </span>
-          </h1>
           
           {/* Animated Slogan */}
           <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
@@ -70,7 +62,7 @@ const Hero: React.FC = () => {
           {/* Subtitle */}
           <div className={`transition-all duration-1000 delay-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <p className="text-xl lg:text-2xl text-white/90 mb-4 leading-relaxed">
-              <span className="font-bold text-[#ff6a3d]">OYA Intelligence™️</span> centralise tout votre cycle de recrutement :
+              <span className="font-bold text-[#ff6a3d]">OYA Intelligence</span> centralise tout votre cycle de recrutement :
             </p>
             <p className="text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed">
               IA, scoring visio, CRM, KPI.
@@ -83,12 +75,14 @@ const Hero: React.FC = () => {
         
         {/* Call to action */}
         <div className={`mt-12 transition-all duration-1000 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <button className="group bg-[#ff6a3d] text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#ff6a3d]/90 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl">
-            <span className="flex items-center space-x-3">
-              <span>Planifier un rendez-vous</span>
-              <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
-            </span>
-          </button>
+          <a href="https://calendly.com/contact-oyaintelligence" target="_blank" rel="noopener noreferrer" className="inline-block">
+            <button className="group bg-[#ff6a3d] text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#ff6a3d]/90 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl">
+              <span className="flex items-center space-x-3">
+                <span>Planifier un rendez-vous</span>
+                <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+              </span>
+            </button>
+          </a>
         </div>
       </div>
 

@@ -28,32 +28,46 @@ const WhyOya: React.FC = () => {
 
   const features = [
     {
-      icon: Radio,
-      title: "📡 Multi-diffusion 1 clic",
-      description: "Publiez vos annonces sur plus de 20 plateformes en un seul clic. Centralisé. Rapide. Sans friction.",
-      color: "from-[#9b6bff] to-[#9b6bff]/80",
-      delay: "delay-100"
+      icon: "📢",
+      title: "Multi-diffusion en 1 clic",
+      problem: "Publier une offre sur plusieurs jobboards est répétitif et chronophage.",
+      solution: "Diffusez automatiquement vos annonces sur tous vos canaux en un clic.",
+      benefit: "Gagnez des heures chaque semaine et maximisez la visibilité de vos offres."
     },
     {
-      icon: Search,
-      title: "🔍 Matching IA intelligent",
-      description: "Tri automatique des meilleurs profils selon les critères stratégiques réels de vos clients.",
-      color: "from-[#ff6a3d] to-[#ff6a3d]/80",
-      delay: "delay-200"
+      icon: "🧠",
+      title: "Matching IA intelligent",
+      problem: "Chercher dans des centaines de CV prend un temps fou.",
+      solution: "Notre IA identifie, note et priorise les meilleurs profils en quelques minutes, selon vos critères techniques et humains.",
+      benefit: "Plus de temps pour la relation client, moins pour le tri manuel."
     },
     {
-      icon: Video,
-      title: "🎥 Visio scoring intégrée",
-      description: "Entretiens enregistrés, analysés par IA, avec transcription automatique et scoring visuel intelligent.",
-      color: "from-blue-500 to-blue-400",
-      delay: "delay-300"
+      icon: "📋",
+      title: "Pipeline clair & collaboratif",
+      problem: "Perdre le fil des candidats et missions ralentit les placements.",
+      solution: "Un tableau visuel pour suivre chaque étape, du sourcing au placement, accessible à toute l'équipe.",
+      benefit: "Plus de visibilité, plus de coordination, moins d'oublis."
     },
     {
-      icon: BarChart3,
-      title: "📊 CRM & KPI intégrés",
-      description: "Suivi en temps réel des performances par mission, client, consultant. Décidez en connaissance de cause.",
-      color: "from-green-500 to-green-400",
-      delay: "delay-400"
+      icon: "📬",
+      title: "Automatisation des échanges",
+      problem: "Relances, mails de confirmation et organisation d'entretiens sont chronophages.",
+      solution: "L'outil envoie automatiquement les bons messages au bon moment.",
+      benefit: "Réactivité immédiate, expérience candidat et client fluidifiée."
+    },
+    {
+      icon: "🎥",
+      title: "Entretiens augmentés par l'IA",
+      problem: "Les notes d'entretien sont souvent incomplètes et subjectives.",
+      solution: "Enregistrez, retranscrivez et obtenez un débrief IA avec points forts/faibles et scoring.",
+      benefit: "Décisions plus rapides et mieux argumentées."
+    },
+    {
+      icon: "📊",
+      title: "Tableau de bord KPI & ROI",
+      problem: "Difficile de mesurer précisément la rentabilité de chaque mission.",
+      solution: "Suivi en temps réel du ROI, des placements, des délais et de la marge nette.",
+      benefit: "Pilotez votre activité avec des chiffres clairs et actionnables."
     }
   ];
 
@@ -68,38 +82,41 @@ const WhyOya: React.FC = () => {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {features.map((feature, index) => (
-            <div 
-              key={index} 
-              className={`group relative p-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl hover:shadow-2xl transition-all duration-500 border border-gray-100 transform hover:-translate-y-2 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} transition-all duration-1000 ${feature.delay}`}
-            >
-              <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <feature.icon className="text-white" size={32} />
+            <div key={index} className={`bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 delay-${(index + 1) * 100} ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#9b6bff] to-[#9b6bff]/80 flex items-center justify-center mb-6 mx-auto text-2xl">
+                {feature.icon}
               </div>
-              
-              <h3 className="text-xl font-bold text-[#223049] mb-4">
-                {feature.title}
-              </h3>
-              
-              <p className="text-gray-600 leading-relaxed">
-                {feature.description}
-              </p>
-
-              {/* Hover effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#ff6a3d]/5 to-[#9b6bff]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">{feature.title}</h3>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold text-red-600 mb-2">Problème :</h4>
+                  <p className="text-gray-600">{feature.problem}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-blue-600 mb-2">Solution OYA :</h4>
+                  <p className="text-gray-600">{feature.solution}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-green-600 mb-2">Bénéfice :</h4>
+                  <p className="text-gray-600">{feature.benefit}</p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
 
         {/* CTA Section */}
         <div className={`text-center transition-all duration-1000 delay-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <button className="group bg-white text-[#ff6a3d] px-8 py-4 rounded-lg font-semibold text-lg border-2 border-[#ff6a3d] hover:bg-[#ff6a3d] hover:text-white transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl">
-            <span className="flex items-center space-x-3">
-              <span>Demander une démo personnalisée</span>
-              <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
-            </span>
-          </button>
+          <a href="https://calendly.com/contact-oyaintelligence" target="_blank" rel="noopener noreferrer" className="inline-block">
+            <button className="group bg-white text-[#ff6a3d] px-8 py-4 rounded-lg font-semibold text-lg border-2 border-[#ff6a3d] hover:bg-[#ff6a3d] hover:text-white transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl">
+              <span className="flex items-center space-x-3">
+                <span>Demander une démo personnalisée</span>
+                <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+              </span>
+            </button>
+          </a>
         </div>
       </div>
     </section>

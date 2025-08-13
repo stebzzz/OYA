@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Linkedin as LinkedIn, Twitter } from 'lucide-react';
+import logoDark from '../assets/logo-oya-dark.svg';
 
 const Footer: React.FC = () => {
   return (
@@ -8,14 +9,8 @@ const Footer: React.FC = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Logo & Description */}
           <div className="md:col-span-2">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#ff6a3d] to-[#9b6bff] rounded-full flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold">oya</h3>
-                <p className="text-sm opacity-75">intelligence</p>
-              </div>
+            <div className="flex items-center mb-6">
+              <img src={logoDark} alt="OYA Intelligence" className="h-10" />
             </div>
             
             <p className="text-gray-300 mb-6 max-w-md">
@@ -48,12 +43,16 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-semibold mb-6">📆 Demandez votre démonstration</h4>
             <div className="space-y-4">
-              <button className="w-full bg-[#ff6a3d] text-white px-6 py-3 rounded-lg hover:bg-[#ff6a3d]/90 transition-colors">
-                Réserver une démo
-              </button>
-              <button className="w-full border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#223049] transition-colors">
-                Voir le logiciel en action
-              </button>
+              <a href="https://calendly.com/contact-oyaintelligence" target="_blank" rel="noopener noreferrer" className="block">
+                <button className="w-full bg-[#ff6a3d] text-white px-6 py-3 rounded-lg hover:bg-[#ff6a3d]/90 transition-colors">
+                  Réserver une démo
+                </button>
+              </a>
+              <a href="https://calendly.com/contact-oyaintelligence" target="_blank" rel="noopener noreferrer" className="block">
+                <button className="w-full border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#223049] transition-colors">
+                  Voir le logiciel en action
+                </button>
+              </a>
             </div>
             
             <div className="flex space-x-4 mt-6">

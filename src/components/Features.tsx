@@ -265,12 +265,12 @@ const Features: React.FC = () => {
               Offrez à vos équipes une solution qui fait le travail, mieux que tout le reste.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-[#ff6a3d] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#ff6a3d]/90 transition-all transform hover:scale-105">
+              <a href="https://calendly.com/contact-oyaintelligence" target="_blank" rel="noopener noreferrer" className="bg-[#ff6a3d] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#ff6a3d]/90 transition-all transform hover:scale-105 text-center">
                 Réserver une démo
-              </button>
-              <button className="bg-white text-[#223049] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all">
+              </a>
+              <a href="https://calendly.com/contact-oyaintelligence" target="_blank" rel="noopener noreferrer" className="bg-white text-[#223049] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all text-center">
                 Voir le logiciel en action
-              </button>
+              </a>
             </div>
           </div>
         </div>
