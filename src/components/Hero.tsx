@@ -54,7 +54,7 @@ const Hero: React.FC = () => {
           
           {/* Animated Slogan */}
           <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <p className="text-2xl lg:text-3xl text-white mb-8 leading-relaxed font-medium min-h-[3rem]">
+            <p className="text-3xl lg:text-4xl xl:text-5xl text-white mb-8 leading-relaxed font-medium min-h-[3rem]">
               {typewriterText}<span className="animate-pulse">|</span>
             </p>
           </div>

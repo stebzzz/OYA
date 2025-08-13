@@ -47,7 +47,7 @@ const FinalCTA: React.FC = () => {
           {/* Description */}
           <div className={`mb-12 transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <p className="text-xl lg:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed mb-8">
-              OYA Intelligence™️ n'est pas une démo générique. C'est un échange stratégique sur votre manière de recruter, vos outils actuels, et vos points de friction.
+              OYA Intelligence n'est pas une démo générique. C'est un échange stratégique sur votre manière de recruter, vos outils actuels, et vos points de friction.
             </p>
             <p className="text-lg text-gray-400 max-w-3xl mx-auto">
               Prenons 20 minutes pour voir si on peut avoir un vrai impact chez vous.

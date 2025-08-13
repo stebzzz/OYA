@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Linkedin as LinkedIn, Twitter } from 'lucide-react';
-import logoDark from '../assets/logo-oya-dark.svg';
+import logo from '../assets/LOGO.PNG?url';
 
 const Footer: React.FC = () => {
   return (
@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
           {/* Logo & Description */}
           <div className="md:col-span-2">
             <div className="flex items-center mb-6">
-              <img src={logoDark} alt="OYA Intelligence" className="h-10" />
+              <img src={logo} alt="OYA Intelligence" className="h-24" />
             </div>
             
             <p className="text-gray-300 mb-6 max-w-md">
@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
         {/* Bottom */}
         <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2025 OYA Intelligence™️
+            © 2025 OYA Intelligence
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Mentions légales</a>

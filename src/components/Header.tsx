@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import logoLight from '../assets/logo-oya-light.svg';
+import logo from '../assets/LOGO.PNG?url';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,7 +27,7 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <img src={logoLight} alt="OYA Intelligence" className="h-8" />
+            <img src={logo} alt="OYA Intelligence" className="h-20" />
           </div>
 
           {/* Desktop Navigation */}

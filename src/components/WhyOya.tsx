@@ -77,7 +77,7 @@ const WhyOya: React.FC = () => {
         {/* Title */}
         <div className="text-center mb-16">
           <h2 className={`text-4xl lg:text-5xl font-bold text-[#223049] mb-8 transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            Pourquoi OYA Intelligence™️ change la donne ?
+            Pourquoi OYA Intelligence change la donne ?
           </h2>
         </div>
 
