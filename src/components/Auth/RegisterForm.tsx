@@ -46,7 +46,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleMode }) => {
               <div className="w-4 h-4 bg-white rounded-full"></div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[#223049]">oya</h1>
+              <h1 className="text-2xl font-bold text-[#223049]">OYA</h1>
               <p className="text-sm text-gray-600 -mt-1">intelligence</p>
             </div>
           </div>

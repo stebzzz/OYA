@@ -74,7 +74,7 @@ const VisionTeam: React.FC = () => {
             
             <div className="bg-gradient-to-r from-[#f4f0ec] to-white p-8 rounded-2xl border border-gray-100">
               <p className="text-xl text-[#223049] font-semibold mb-6">
-                OYA Intelligence™️ a été conçu pour reconnecter la tech à la réalité des agences :
+                OYA Intelligence a été conçu pour reconnecter la tech à la réalité des agences :
               </p>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="flex items-center space-x-3">
@@ -141,7 +141,7 @@ const VisionTeam: React.FC = () => {
             </div>
             
             <p className="text-xl text-gray-300 mb-6 max-w-4xl mx-auto leading-relaxed">
-              OYA Intelligence™️ n'est pas un outil "en plus" : c'est un levier stratégique conçu par et pour des recruteurs.
+              OYA Intelligence n'est pas un outil "en plus" : c'est un levier stratégique conçu par et pour des recruteurs.
             </p>
             
             <p className="text-lg text-gray-400 max-w-2xl mx-auto">

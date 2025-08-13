@@ -28,7 +28,7 @@ export const InterviewInvitationTemplate: React.FC<Readonly<EmailTemplateProps>>
         <div style={{ display: 'inline-flex', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #ff6a3d, #9b6bff)', borderRadius: '50%', marginRight: '15px' }}></div>
           <div>
-            <h1 style={{ color: '#223049', fontSize: '24px', margin: '0', fontWeight: 'bold' }}>oya</h1>
+            <h1 style={{ color: '#223049', fontSize: '24px', margin: '0', fontWeight: 'bold' }}>OYA</h1>
             <p style={{ color: '#666', fontSize: '12px', margin: '0' }}>intelligence</p>
           </div>
         </div>

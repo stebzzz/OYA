@@ -44,10 +44,10 @@ const Features: React.FC = () => {
   return (
     <section id="features" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Why Oya Section */}
+        {/* Why OYA Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center px-4 py-2 bg-[#ff6a3d]/10 rounded-full text-[#ff6a3d] font-medium text-sm mb-6">
-            🚀 Pourquoi Oya change la donne ?
+            🚀 Pourquoi OYA change la donne ?
           </div>
           
           <h2 className="text-4xl lg:text-5xl font-bold text-[#223049] mb-6">
@@ -56,7 +56,7 @@ const Features: React.FC = () => {
           
           <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-8">
             Ils sont fragmentés, chronophages, peu intégrés, et vous ralentissent.<br/>
-            <strong>Oya est une rupture.</strong><br/>
+            <strong>OYA est une rupture.</strong><br/>
             Un logiciel autonome, intelligent et complet qui vous permet de recruter de façon radicalement plus rapide et plus qualitative, sans dépendre de 5 outils différents.
           </p>
           
@@ -76,10 +76,10 @@ const Features: React.FC = () => {
           </div>
         </div>
         
-        {/* What Oya Does Header */}
+        {/* What OYA Does Header */}
         <div className="text-center mb-16">
           <h3 className="text-3xl lg:text-4xl font-bold text-[#223049] mb-6">
-            💡 Ce que fait Oya (et ce que les autres ne font pas)
+            💡 Ce que fait OYA (et ce que les autres ne font pas)
           </h3>
         </div>
 
@@ -169,7 +169,7 @@ const Features: React.FC = () => {
         <div className="text-center mt-20 mb-16">
           <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-full text-green-600 font-semibold text-sm mb-8 animate-bounce">
             <span className="mr-2 text-lg">🎯</span>
-            Pour qui est conçu Oya ?
+            Pour qui est conçu OYA ?
           </div>
           
           <h3 className="text-3xl lg:text-4xl font-bold text-[#223049] mb-4">
@@ -177,7 +177,7 @@ const Features: React.FC = () => {
           </h3>
           
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-            Que vous soyez une agence indépendante ou un groupe international, Oya s'adapte à votre organisation
+            Que vous soyez une agence indépendante ou un groupe international, OYA s'adapte à votre organisation
           </p>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto mb-12">
@@ -234,7 +234,7 @@ const Features: React.FC = () => {
             <div className="group bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300">
               <div className="flex items-center justify-center space-x-3">
                 <span className="text-2xl group-hover:animate-spin">👥</span>
-                <span className="text-gray-700 font-medium">Monosite ou multisite, Oya s'adapte à votre organisation</span>
+                <span className="text-gray-700 font-medium">Monosite ou multisite, OYA s'adapte à votre organisation</span>
               </div>
             </div>
             <div className="group bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300">

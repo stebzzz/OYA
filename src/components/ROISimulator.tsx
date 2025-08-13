@@ -94,7 +94,7 @@ const ROISimulator: React.FC = () => {
             Estimez votre ROI en 15sec
           </h2>
           <p className={`text-xl text-gray-600 max-w-3xl mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            Un outil simple pour comprendre l'impact concret d'OYA Intelligence™️ sur vos performances.
+            Un outil simple pour comprendre l'impact concret d'OYA Intelligence sur vos performances.
           </p>
         </div>
 
@@ -206,7 +206,7 @@ const ROISimulator: React.FC = () => {
 
             <div className="mt-8 p-6 bg-gradient-to-r from-[#223049]/5 to-[#9b6bff]/5 rounded-xl">
               <p className="text-lg text-gray-700 font-medium text-center">
-                💡 <strong>Avec OYA Intelligence™️, vous pourriez générer {animatedValues.additionalRevenue.toLocaleString()}€ de revenus supplémentaires par mois</strong>
+                💡 <strong>Avec OYA Intelligence, vous pourriez générer {animatedValues.additionalRevenue.toLocaleString()}€ de revenus supplémentaires par mois</strong>
               </p>
             </div>
           </div>

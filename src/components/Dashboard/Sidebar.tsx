@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
             <div className="w-3 h-3 bg-white rounded-full"></div>
           </div>
           <div>
-            <h1 className="text-xl font-bold">oya</h1>
+            <h1 className="text-xl font-bold">OYA</h1>
             <p className="text-sm opacity-75">intelligence</p>
           </div>
         </div>

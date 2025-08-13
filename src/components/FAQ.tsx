@@ -37,7 +37,7 @@ const FAQ: React.FC = () => {
 
   const faqItems = [
     {
-      question: "🧩 OYA Intelligence™️ remplace-t-il mon ATS ?",
+      question: "🧩 OYA Intelligence remplace-t-il mon ATS ?",
       answer: "Non. Il peut s'y connecter, mais couvre à lui seul 90 % de vos besoins quotidiens."
     },
     {
@@ -58,7 +58,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "🔗 OYA s'intègre-t-il avec mes outils actuels ?",
-      answer: "Oui, OYA Intelligence™️ peut se connecter à la plupart des ATS, CRM et jobboards existants via API. Notre équipe vous accompagne dans l'intégration."
+      answer: "Oui, OYA Intelligence peut se connecter à la plupart des ATS, CRM et jobboards existants via API. Notre équipe vous accompagne dans l'intégration."
     }
   ];
 
